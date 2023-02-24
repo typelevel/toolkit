@@ -21,7 +21,7 @@ lazy val toolkit = crossProject(JVMPlatform, JSPlatform, NativePlatform)
       "org.http4s" %%% "http4s-ember-client" % "0.23.18",
       "io.circe" %%% "circe-core" % "0.14.4",
       "org.http4s" %%% "http4s-circe" % "0.23.18",
-      "com.monovore" %%% "decline" % "2.4.1",
+      "com.monovore" %%% "decline-effect" % "2.4.1",
       "org.typelevel" %%% "munit-cats-effect" % "2.0.0-M3" // not % Test, on purpose :)
     ),
     mimaPreviousArtifacts := Set()
