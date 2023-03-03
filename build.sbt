@@ -32,7 +32,11 @@ lazy val toolkit = crossProject(JVMPlatform, JSPlatform, NativePlatform)
 lazy val docs = project
   .in(file("site"))
   .enablePlugins(TypelevelSitePlugin)
+  .dependsOn(
+    toolkit.jvm // overkill? this way we can use mdoc to check the examples at least...
+  )
   .settings(
+    scalaVersion := "3.2.2",
     tlSiteHelium ~= {
       _.site.mainNavigation(
         appendLinks = List(
