@@ -10,7 +10,7 @@ ThisBuild / mergifyStewardConfig ~= {
 
 ThisBuild / crossScalaVersions := Seq("2.12.17", "2.13.10", "3.2.2")
 
-lazy val root = tlCrossRootProject.aggregate(toolkit, docs)
+lazy val root = tlCrossRootProject.aggregate(toolkit)
 
 lazy val toolkit = crossProject(JVMPlatform, JSPlatform, NativePlatform)
   .in(file("toolkit"))
