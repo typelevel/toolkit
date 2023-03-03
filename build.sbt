@@ -18,6 +18,7 @@ lazy val toolkit = crossProject(JVMPlatform, JSPlatform, NativePlatform)
       "org.typelevel" %%% "cats-core" % "2.9.0",
       "org.typelevel" %%% "cats-effect" % "3.4.8",
       "co.fs2" %%% "fs2-io" % "3.6.1",
+      "org.gnieh" %%% "fs2-data-csv" % "1.6.1",
       "org.http4s" %%% "http4s-ember-client" % "0.23.18",
       "io.circe" %%% "circe-jawn" % "0.14.4",
       "org.http4s" %%% "http4s-circe" % "0.23.18",
