@@ -42,18 +42,18 @@ lazy val docs = project
         appendLinks = List(
           ThemeNavigationSection(
             "Related Projects",
-            TextLink.external("https://github.com/typelevel/cats", "cats"),
+            TextLink.external("https://github.com/typelevel/fs2", "fs2"),
+            TextLink.external("https://github.com/typelevel/cats", "Cats"),
+            TextLink.external("https://github.com/circe/circe", "Circe"),
+            TextLink.external("https://github.com/http4s/http4s", "Http4s"),
+            TextLink.external("https://github.com/bkirwi/decline", "Decline"),
             TextLink.external(
               "https://github.com/typelevel/cats-effect",
-              "cats-effect"
+              "Cats Effect"
             ),
-            TextLink.external("https://github.com/typelevel/fs2", "fs2"),
-            TextLink.external("https://github.com/http4s/http4s", "http4s"),
-            TextLink.external("https://github.com/circe/circe", "circe"),
-            TextLink.external("https://github.com/bkirwi/decline", "decline"),
             TextLink.external(
               "https://github.com/typelevel/munit-cats-effect",
-              "munit-cats-effect"
+              "Munit Cats Effect"
             )
           )
         )
