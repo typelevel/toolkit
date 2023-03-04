@@ -10,6 +10,7 @@ Typelevel toolkit is a meta library that currently includes these libraries:
 
 - [Cats] and [Cats Effect]
 - [fs2] and [fs2 I/O]
+- [fs2 data csv] and its generic module
 - [Http4s Ember client]
 - [Circe] and http4s integration
 - [Decline Effect]
@@ -41,6 +42,7 @@ object Hello extends IOApp.Simple:
 [Cats Effect]: https://typelevel.org/cats-effect
 [fs2]: https://fs2.io/#/
 [fs2 I/O]: https://fs2.io/#/io
+[fs2 data csv]: https://fs2-data.gnieh.org/documentation/csv/
 [Http4s Ember Client]: https://http4s.org/v0.23/docs/client.html
 [Circe]: https://circe.github.io/circe/
 [Decline Effect]: https://ben.kirw.in/decline/effect.html
