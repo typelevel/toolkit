@@ -51,6 +51,10 @@ object Hello extends IOApp.Simple {
   def run = IO.println("Hello toolkit!")
 }
 ```
+
+### Native Image
+When building GraalVM Native Image the --no-fallback option is required, otherwise native-image will try searching a static reflection configuration for [this Enumeration method]. Thus using this flag is safe only if you're not using Enumerations in your codebase, see [this comment] for more info.
+
 @:@
 
 [Scala CLI]: https://scala-cli.virtuslab.org/
@@ -64,3 +68,6 @@ object Hello extends IOApp.Simple {
 [Circe]: https://circe.github.io/circe/
 [Decline Effect]: https://ben.kirw.in/decline/effect.html
 [Munit Cats Effect]: https://github.com/typelevel/munit-cats-effect
+
+[this Enumeration method]: https://github.com/scala/scala/blob/v2.13.8/src/library/scala/Enumeration.scala#L190-L215=
+[this comment]: https://github.com/typelevel/cats-effect/issues/3051#issuecomment-1167026949
