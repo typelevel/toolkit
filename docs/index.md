@@ -51,13 +51,15 @@ object Hello extends IOApp.Simple {
   def run = IO.println("Hello toolkit!")
 }
 ```
-
-### Native Image
-When building GraalVM Native Image the --no-fallback option is required, otherwise native-image will try searching a static reflection configuration for [this Enumeration method]. Thus using this flag is safe only if you're not using Enumerations in your codebase, see [this comment] for more info.
-
 @:@
 
-[Scala CLI]: https://scala-cli.virtuslab.org/
+### Native Image
+
+When building GraalVM Native Image the --no-fallback option is required, otherwise native-image will try searching
+a static reflection configuration for [this Enumeration method]. Thus using this flag is safe only if you're not using
+Enumerations in your codebase, see [this comment] for more info.
+
+[Scala CLI]: https://scala-cli.virtuslab.org/_
 [Scala Toolkit]: https://github.com/VirtusLab/toolkit
 [Cats]: https://typelevel.org/cats
 [Cats Effect]: https://typelevel.org/cats-effect
