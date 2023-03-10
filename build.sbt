@@ -1,4 +1,5 @@
 import laika.helium.config._
+import laika.rewrite.nav.{ChoiceConfig, Selections, SelectionConfig}
 
 ThisBuild / tlBaseVersion := "0.0"
 ThisBuild / startYear := Some(2023)
@@ -32,9 +33,7 @@ lazy val toolkit = crossProject(JVMPlatform, JSPlatform, NativePlatform)
 lazy val docs = project
   .in(file("site"))
   .enablePlugins(TypelevelSitePlugin)
-  .dependsOn(
-    toolkit.jvm // overkill? this way we can use mdoc to check the examples at least...
-  )
+  .dependsOn(toolkit.jvm)
   .settings(
     scalaVersion := "3.2.2",
     tlSiteHelium ~= {
@@ -55,6 +54,17 @@ lazy val docs = project
               "https://github.com/typelevel/munit-cats-effect",
               "Munit Cats Effect"
             )
+          )
+        )
+      )
+    },
+    laikaConfig ~= {
+      _.withConfigValue(
+        Selections(
+          SelectionConfig(
+            "scala-version",
+            ChoiceConfig("scala-3", "Scala 3"),
+            ChoiceConfig("scala-2", "Scala 2")
           )
         )
       )

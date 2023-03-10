@@ -1,11 +1,15 @@
 # Examples
 
-This page contains examples of how typelevel-toolkit and [Scala CLI] work together to write single file scripts using all the power of the typelevel libraries.
+This page contains examples of how typelevel-toolkit and [Scala CLI] work together to write single file scripts using all the power of the Typelevel's libraries.
 
 ## POSTing data and writing the response to a file
 This example was written by [Koroeskohr] and taken from the [Virtuslab Blog](https://virtuslab.com/blog/scala-toolkit-makes-scala-powerful-straight-out-of-the-box/).
 
-```scala mdoc
+@:select(scala-version)
+
+@:choice(scala-3)
+
+```scala mdoc:silent
 //> using lib "org.typelevel::toolkit::@VERSION@"
 
 import cats.effect.*
@@ -40,6 +44,46 @@ object Main extends IOApp.Simple:
       }
   }
 ```
+@:choice(scala-2)
+
+```scala mdoc:reset:silent
+//> using lib "org.typelevel::toolkit::0.0.2"
+
+import cats.effect._
+import io.circe.Decoder
+import fs2.Stream
+import fs2.io.file._
+import org.http4s.ember.client._
+import org.http4s._
+import org.http4s.implicits._
+import org.http4s.circe._
+
+object Main extends IOApp.Simple {
+  case class Data(value: String)
+  implicit val json: Decoder[Data]          = Decoder.forProduct1("data")(Data.apply)
+  implicit val enc: EntityDecoder[IO, Data] = jsonOf[IO, Data]
+
+  def run = EmberClientBuilder.default[IO].build.use { client =>
+    val request: Request[IO] =
+      Request(Method.POST, uri"https://httpbin.org/anything")
+        .withEntity("file.txt bunchofdata")
+
+    client
+      .expect[Data](request)
+      .map(_.value.split(" "))
+      .flatMap { case Array(fileName, content) =>
+        IO.println(s"Writing data to $fileName") *>
+          Stream(content)
+            .through(fs2.text.utf8.encode)
+            .through(Files[IO].writeAll(Path(fileName)))
+            .compile
+            .drain
+      }
+  }
+}
+```
+
+@:@
 
 ## Command line version of mkString
 
@@ -47,7 +91,7 @@ In this example, [fs2] is used to read a stream of newline delimited strings fro
 
 Compiling this example with [scala-native], adding these directives
 
-```
+```scala mdoc:reset:silent
 //> using packaging.output "mkString"
 //> using platform "native"
 //> using nativeMode "release-fast"
@@ -60,6 +104,9 @@ $ echo -e "foo\nbar" | ./mkString --prefix "[" -d "," --suffix "]"
 // [foo,bar]
 ```
 
+@:select(scala-version)
+
+@:choice(scala-3)
 ```scala mdoc:reset:silent
 //> using lib "org.typelevel::toolkit::@VERSION@"
 
@@ -85,6 +132,38 @@ object Main extends CommandIOApp("mkString", "Concatenates strings from stdin"):
     stream.foreach(IO.print).compile.drain.as(ExitCode.Success)
   }
 ```
+
+@:choice(scala-2)
+
+```scala mdoc:reset:silent
+//> using lib "org.typelevel::toolkit::0.0.2"
+
+import cats.effect._
+import cats.syntax.all._
+import com.monovore.decline._
+import com.monovore.decline.effect._
+import fs2._
+import fs2.io._
+
+// inspired by list.mkString
+object Main extends CommandIOApp("mkString", "Concatenates strings from stdin") {
+  val prefix    = Opts.option[String]("prefix", "").withDefault("")
+  val delimiter = Opts.option[String]("delimiter", "", "d").withDefault(",")
+  val suffix    = Opts.option[String]("suffix", "The suffix").withDefault("")
+
+  val stringStream: Stream[IO, String] = stdinUtf8[IO](1024 * 1024 * 10)
+    .repartition(s => Chunk.array(s.split("\n", -1)))
+    .filter(_.nonEmpty)
+
+  def main = (prefix, delimiter, suffix).mapN { (pre, delim, post) =>
+    val stream = Stream(pre) ++ stringStream.intersperse(delim) ++ Stream(post)
+    stream.foreach(IO.print).compile.drain.as(ExitCode.Success)
+  }
+}
+```
+
+@:@
+
 
 [fs2]: https://fs2.io/#/
 [decline]: https://ben.kirw.in/decline/

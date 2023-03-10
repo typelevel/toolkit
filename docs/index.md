@@ -18,8 +18,12 @@ Typelevel toolkit is a meta library that currently includes these libraries:
 
 and it's published for Scala 2.12, 2.13 and 3.2.2.
 
-Albeit being created to be used in combination with [Scala CLI], typelevel-toolkit can be imported into your `build.sbt` using:
+To use it with [Scala CLI] use this directive:
+```scala
+//> using lib "org.typelevel::toolkit::@VERSION@"
+```
 
+Albeit being created to be used with [Scala CLI], typelevel-toolkit can be imported into your `build.sbt` using:
 ```scala
 libraryDependencies += "org.typelevel" %% "toolkit" % "@VERSION@"
 // for native and js
@@ -27,7 +31,9 @@ libraryDependencies += "org.typelevel" %%% "toolkit" % "@VERSION@"
 ```
 
 ## Quick Start Example
-```scala mdoc
+@:select(scala-version)
+@:choice(scala-3)
+```scala mdoc:reset:silent
 //> using lib "org.typelevel::toolkit::@VERSION@"
 
 import cats.effect.*
@@ -35,6 +41,17 @@ import cats.effect.*
 object Hello extends IOApp.Simple:
   def run = IO.println("Hello toolkit!")
 ```
+@:choice(scala-2)
+```scala mdoc:reset:silent
+//> using lib "org.typelevel::toolkit::@VERSION@"
+
+import cats.effect._
+
+object Hello extends IOApp.Simple {
+  def run = IO.println("Hello toolkit!")
+}
+```
+@:@
 
 [Scala CLI]: https://scala-cli.virtuslab.org/
 [Scala Toolkit]: https://github.com/VirtusLab/toolkit
