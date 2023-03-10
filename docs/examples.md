@@ -164,9 +164,79 @@ object Main extends CommandIOApp("mkString", "Concatenates strings from stdin") 
 
 @:@
 
+## Parsing and transforming a CSV file
+
+Here, [fs2-data-csv] is used to read and parse a comma separated file. 
+Manual encoders and decoders are defined for our `Passenger`s to showcase `fs2-data` power. 
+
+
+@:select(scala-version)
+
+@:choice(scala-3)
+```scala mdoc:reset:silent
+//> using lib "org.typelevel::toolkit::@VERSION@"
+
+import cats.effect.*
+import fs2.text
+import fs2.data.csv.*
+import fs2.data.csv.generic.semiauto._
+import fs2.io.file.{Path, Flags, Files}
+import cats.data.NonEmptyList
+
+case class Passenger(
+    id: Long,
+    firstName: String,
+    age: Either[String, Int],
+    flightNumber: String,
+    country: String
+)
+
+object Passenger:
+  given csvRowDecoder: CsvRowDecoder[Passenger, String] with
+    def apply(row: CsvRow[String]): DecoderResult[Passenger] =
+      for
+        id <- row.as[Long]("id")
+        firstName <- row.as[String]("First Name")
+        ageOpt <- row.asNonEmpty[Int]("Age")
+        flightNumber <- row.as[String]("flight number")
+        country <- row.as[String]("country")
+      yield
+        val age = ageOpt.toRight[String]("N/A")
+        Passenger(id, firstName, age, flightNumber, country)
+
+    given csvRowEncoder: CsvRowEncoder[Passenger, String] with
+      def apply(p: Passenger): CsvRow[String] =
+        CsvRow.fromNelHeaders(
+          NonEmptyList.of(
+            (p.firstName, "first_name"),
+            (p.age.toString(), "age"),
+            (p.flightNumber, "flight_number"),
+            (p.country, "country")
+          )
+        )
+
+val input = Files[IO]
+  .readAll(Path("./example.csv"), 1024, Flags.Read)
+  .through(text.utf8.decode)
+  .through(decodeUsingHeaders[Passenger]())
+
+object CSVPrinter extends IOApp.Simple:
+  val run =
+    input.evalTap(p => IO.println(p)).compile.drain
+```
+
+
+@:choice(scala-2)
+```scala mdoc:reset:silent
+// TODO
+```
+@:@
+
 
 [fs2]: https://fs2.io/#/
+[fs2-data-csv]: https://fs2-data.gnieh.org/documentation/csv/
 [decline]: https://ben.kirw.in/decline/
 [scala-native]: https://scala-native.org/en/stable/
 [Scala CLI]: https://scala-cli.virtuslab.org/
 [Koroeskohr]: https://github.com/Koroeskohr
+
