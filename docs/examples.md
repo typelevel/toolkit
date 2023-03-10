@@ -47,7 +47,7 @@ object Main extends IOApp.Simple:
 @:choice(scala-2)
 
 ```scala mdoc:reset:silent
-//> using lib "org.typelevel::toolkit::0.0.2"
+//> using lib "org.typelevel::toolkit::@VERSION@"
 
 import cats.effect._
 import io.circe.Decoder
@@ -136,7 +136,7 @@ object Main extends CommandIOApp("mkString", "Concatenates strings from stdin"):
 @:choice(scala-2)
 
 ```scala mdoc:reset:silent
-//> using lib "org.typelevel::toolkit::0.0.2"
+//> using lib "org.typelevel::toolkit::@VERSION@"
 
 import cats.effect._
 import cats.syntax.all._
