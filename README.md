@@ -15,6 +15,7 @@ It currently includes:
 
 * [Cats] and [Cats Effect]
 * [FS2] and [FS2 I/O]
+* [FS2 Data Csv] and its generic module
 * [http4s Ember client]
 * [Circe] and http4s integration
 * [Decline Effect]
@@ -26,6 +27,7 @@ It currently includes:
 [Cats Effect]: https://typelevel.org/cats-effect
 [FS2]: https://fs2.io/#/
 [FS2 I/O]: https://fs2.io/#/io
+[FS2 Data Csv]: https://fs2-data.gnieh.org/documentation/csv/
 [http4s Ember Client]: https://http4s.org/v0.23/docs/client.html
 [Circe]: https://circe.github.io/circe/
 [Decline Effect]: https://ben.kirw.in/decline/effect.html

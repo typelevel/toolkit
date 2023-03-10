@@ -21,6 +21,14 @@ pull_request_rules:
   - status-success=Build and Test (ubuntu-latest, 3, temurin@17, rootNative)
   actions:
     merge: {}
+- name: Label site PRs
+  conditions:
+  - files~=^site/
+  actions:
+    label:
+      add:
+      - site
+      remove: []
 - name: Label toolkit PRs
   conditions:
   - files~=^toolkit/
