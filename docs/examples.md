@@ -167,7 +167,16 @@ object Main extends CommandIOApp("mkString", "Concatenates strings from stdin") 
 ## Parsing and transforming a CSV file
 
 Here, [fs2-data-csv] is used to read and parse a comma separated file. 
-Manual encoders and decoders are defined for our `Passenger`s to showcase `fs2-data` power. 
+Manual encoders and decoders are defined for our `Passenger`s to show you how to everything from scratch.
+
+Let's start with a CSV file that has records of fictious passengers registered for a flight:
+
+```
+id,First Name,Age,flight number,country
+1,Seyton,44,WX122,Tanzania
+2,Lina,,UX199,Greenland
+3,Grogu,,SW999,Singapore
+```
 
 
 @:select(scala-version)
