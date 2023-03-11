@@ -320,7 +320,7 @@ object CSVPrinter extends IOApp.Simple {
         .foldMap(p => (p.age.getOrElse(0), 1))
         .compile
         .lastOrError
-        .map((sum, count) => sum / count)
+        .map({ case (sum, count) => sum / count})
 
     input
       .evalTap(p =>
