@@ -167,12 +167,12 @@ object Main extends CommandIOApp("mkString", "Concatenates strings from stdin") 
 ## Parsing and transforming a CSV file
 
 Here, [fs2-data-csv] is used to read and parse a comma separated file. 
-Manual encoders and decoders are defined for our `Passenger`s to show you how to everything from scratch.
+Manual encoders and decoders are defined for our `Passenger`s to show you how to do everything from scratch.
 
 Let's start with a CSV file that has records of fictious passengers registered for a flight:
 
 ```
-id,First Name,Age,flight number,country
+id,First Name,Age,flight number,destination
 1,Seyton,44,WX122,Tanzania
 2,Lina,,UX199,Greenland
 3,Grogu,,SW999,Singapore
@@ -197,10 +197,11 @@ case class Passenger(
     firstName: String,
     age: Either[String, Int],
     flightNumber: String,
-    country: String
+    destination: String
 )
 
 object Passenger:
+  // Here we define a manual decoder for each row in our CSV
   given csvRowDecoder: CsvRowDecoder[Passenger, String] with
     def apply(row: CsvRow[String]): DecoderResult[Passenger] =
       for
@@ -208,11 +209,12 @@ object Passenger:
         firstName <- row.as[String]("First Name")
         ageOpt <- row.asNonEmpty[Int]("Age")
         flightNumber <- row.as[String]("flight number")
-        country <- row.as[String]("country")
+        destination <- row.as[String]("destination")
       yield
         val age = ageOpt.toRight[String]("N/A")
-        Passenger(id, firstName, age, flightNumber, country)
+        Passenger(id, firstName, age, flightNumber, destination)
 
+    // Here we define a manual encoder for encoding Passenger classes to a CSV
     given csvRowEncoder: CsvRowEncoder[Passenger, String] with
       def apply(p: Passenger): CsvRow[String] =
         CsvRow.fromNelHeaders(
@@ -220,7 +222,7 @@ object Passenger:
             (p.firstName, "first_name"),
             (p.age.toString(), "age"),
             (p.flightNumber, "flight_number"),
-            (p.country, "country")
+            (p.destination, "destination")
           )
         )
 
@@ -230,14 +232,73 @@ val input = Files[IO]
   .through(decodeUsingHeaders[Passenger]())
 
 object CSVPrinter extends IOApp.Simple:
-  val run =
+  val run: IO[Unit] =
     input.evalTap(p => IO.println(p)).compile.drain
 ```
 
 
 @:choice(scala-2)
 ```scala mdoc:reset:silent
-// TODO
+
+//> using lib "org.typelevel::toolkit::0.0.2"
+//> using lib "org.gnieh::fs2-data-csv::1.6.1"
+//> using lib "org.gnieh::fs2-data-csv-generic::1.6.1"
+
+import cats.effect.*
+import fs2.text
+import fs2.data.csv.*
+import fs2.data.csv.generic.semiauto._
+import fs2.io.file.{Path, Flags, Files}
+import cats.data.NonEmptyList
+
+case class Passenger(
+    id: Long,
+    firstName: String,
+    age: Either[String, Int],
+    flightNumber: String,
+    destination: String
+)
+
+object Passenger {
+  // Here we define a manual decoder for each row in our CSV
+  implicit val csvRowDecoder: CsvRowDecoder[Passenger, String] =
+    new CsvRowDecoder[Passenger, String] {
+      def apply(row: CsvRow[String]): DecoderResult[Passenger] =
+        for
+          id <- row.as[Long]("id")
+          firstName <- row.as[String]("First Name")
+          ageOpt <- row.asNonEmpty[Int]("Age")
+          flightNumber <- row.as[String]("flight number")
+          destination <- row.as[String]("destination")
+        yield
+          val age = ageOpt.toRight[String]("N/A")
+          Passenger(id, firstName, age, flightNumber, destination)
+    }
+
+  // Here we define a manual encoder for encoding Passenger classes to a CSV
+  implicit val csvRowEncoder: CsvRowEncoder[Passenger, String] =
+    new CsvRowEncoder[Passenger, String] {
+      def apply(p: Passenger): CsvRow[String] =
+        CsvRow.fromNelHeaders(
+          NonEmptyList.of(
+            (p.firstName, "first_name"),
+            (p.age.toString(), "age"),
+            (p.flightNumber, "flight_number"),
+            (p.destination, "destination")
+          )
+        )
+    }
+}
+
+val input = Files[IO]
+  .readAll(Path("./example.csv"), 1024, Flags.Read)
+  .through(text.utf8.decode)
+  .through(decodeUsingHeaders[Passenger]())
+
+object CSVPrinter extends IOApp.Simple {
+  val run: IO[Unit] =
+    input.evalTap(p => IO.println(p)).compile.drain
+}
 ```
 @:@
 
