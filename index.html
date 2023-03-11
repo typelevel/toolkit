@@ -99,7 +99,8 @@
 
   <ul class="nav-list">
     <li class="level1 nav-leaf"><a href="#overview">Overview</a></li>
-    <li class="level1 nav-leaf"><a href="#quick-start-example">Quick Start Example</a></li>
+    <li class="level1 nav-node"><a href="#quick-start-example">Quick Start Example</a></li>
+    <li class="level2 nav-leaf"><a href="#native-image">Native Image</a></li>
   </ul>
 
   <p class="footer"></p>
@@ -124,9 +125,9 @@
           <li><a href="https://github.com/typelevel/munit-cats-effect">Munit Cats Effect</a></li>
         </ul>
         <p>and it&#39;s published for Scala 2.12, 2.13 and 3.2.2.</p>
-        <p>To use it with <a href="https://scala-cli.virtuslab.org/">Scala CLI</a> use this directive:</p>
+        <p>To use it with <a href="https://scala-cli.virtuslab.org/_">Scala CLI</a> use this directive:</p>
         <pre class="keep-together pdf epub"><code class="nohighlight"><span class="comment">//&gt; using lib &quot;org.typelevel::toolkit::0.0.2&quot;</span></code></pre>
-        <p>Albeit being created to be used with <a href="https://scala-cli.virtuslab.org/">Scala CLI</a>, typelevel-toolkit can be imported into your <code>build.sbt</code> using:</p>
+        <p>Albeit being created to be used with <a href="https://scala-cli.virtuslab.org/_">Scala CLI</a>, typelevel-toolkit can be imported into your <code>build.sbt</code> using:</p>
         <pre class="keep-together pdf epub"><code class="nohighlight"><span class="identifier">libraryDependencies</span><span> += </span><span class="string-literal">&quot;org.typelevel&quot;</span><span> %% </span><span class="string-literal">&quot;toolkit&quot;</span><span> % </span><span class="string-literal">&quot;0.0.2&quot;</span><span>
 </span><span class="comment">// for native and js
 </span><span class="identifier">libraryDependencies</span><span> += </span><span class="string-literal">&quot;org.typelevel&quot;</span><span> %%% </span><span class="string-literal">&quot;toolkit&quot;</span><span> % </span><span class="string-literal">&quot;0.0.2&quot;</span></code></pre>
@@ -155,6 +156,11 @@
 }</span></code></pre>
           </div>
         </div>
+        
+        <h3 id="native-image" class="section"><a class="anchor-link left" href="#native-image"><i class="icofont-laika link">&#xef71;</i></a>Native Image</h3>
+        <p>When building GraalVM Native Image the --no-fallback option is required, otherwise native-image will try searching
+        a static reflection configuration for <a href="https://github.com/scala/scala/blob/v2.13.8/src/library/scala/Enumeration.scala#L190-L215=">this Enumeration method</a>. Thus using this flag is safe only if you&#39;re not using
+        Enumerations in your codebase, see <a href="https://github.com/typelevel/cats-effect/issues/3051#issuecomment-1167026949">this comment</a> for more info.</p>
 
         
 <hr class="footer-rule"/>
