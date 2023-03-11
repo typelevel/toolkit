@@ -239,10 +239,7 @@ object CSVPrinter extends IOApp.Simple:
 
 @:choice(scala-2)
 ```scala mdoc:reset:silent
-
-//> using lib "org.typelevel::toolkit::0.0.2"
-//> using lib "org.gnieh::fs2-data-csv::1.6.1"
-//> using lib "org.gnieh::fs2-data-csv-generic::1.6.1"
+//> using lib "org.typelevel::toolkit::@VERSION@"
 
 import cats.effect.*
 import fs2.text
