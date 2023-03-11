@@ -232,8 +232,16 @@ val input = Files[IO]
   .through(decodeUsingHeaders[Passenger]())
 
 object CSVPrinter extends IOApp.Simple:
+
   val run: IO[Unit] =
-    input.evalTap(p => IO.println(p)).compile.drain
+    input
+      .evalTap(p =>
+        IO.println(
+          s"${p.firstName} is taking flight: ${p.flightNumber} to ${p.destination}"
+        )
+      )
+      .compile
+      .drain
 ```
 
 
@@ -295,8 +303,14 @@ object CSVPrinter extends IOApp.Simple {
     .through(decodeUsingHeaders[Passenger]())
 
   val run: IO[Unit] =
-    input.evalTap(p => IO.println(p)).compile.drain
-
+    input
+      .evalTap(p =>
+        IO.println(
+          s"${p.firstName} is taking flight: ${p.flightNumber} to ${p.destination}"
+        )
+      )
+      .compile
+      .drain
 }
 ```
 @:@
