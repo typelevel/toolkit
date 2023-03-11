@@ -261,7 +261,7 @@ case class Passenger(
     firstName: String,
     age: Either[String, Int],
     flightNumber: String,
-    country: String
+    destination: String
 )
 
 object Passenger {
@@ -274,10 +274,10 @@ object Passenger {
           firstName <- row.as[String]("First Name")
           ageOpt <- row.asNonEmpty[Int]("Age")
           flightNumber <- row.as[String]("flight number")
-          country <- row.as[String]("country")
+          destination <- row.as[String]("destination")
         } yield {
           val age = ageOpt.toRight[String]("N/A")
-          Passenger(id, firstName, age, flightNumber, country)
+          Passenger(id, firstName, age, flightNumber, destination)
         }
     }
 
@@ -290,7 +290,7 @@ object Passenger {
             (p.firstName, "first_name"),
             (p.age.toString(), "age"),
             (p.flightNumber, "flight_number"),
-            (p.country, "country")
+            (p.destination, "destination")
           )
         )
     }
