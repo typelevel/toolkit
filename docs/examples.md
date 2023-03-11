@@ -234,6 +234,14 @@ val input = Files[IO]
 object CSVPrinter extends IOApp.Simple:
 
   val run: IO[Unit] =
+    // Let's do an aggregation of all the values in the age column
+    val meanIO =
+      input
+        .foldMap(p => (p.age.getOrElse(0), 1))
+        .compile
+        .lastOrError
+        .map((sum, count) => sum / count)
+
     input
       .evalTap(p =>
         IO.println(
@@ -241,7 +249,9 @@ object CSVPrinter extends IOApp.Simple:
         )
       )
       .compile
-      .drain
+      .drain >> meanIO.flatMap(mean =>
+      IO.println(s"The mean age of the passengers is $mean")
+    )
 ```
 
 
@@ -302,7 +312,16 @@ object CSVPrinter extends IOApp.Simple {
     .through(text.utf8.decode)
     .through(decodeUsingHeaders[Passenger]())
 
-  val run: IO[Unit] =
+
+  val run: IO[Unit] = {
+    // Let's do an aggregation of all the values in the age column
+    val meanIO =
+      input
+        .foldMap(p => (p.age.getOrElse(0), 1))
+        .compile
+        .lastOrError
+        .map((sum, count) => sum / count)
+
     input
       .evalTap(p =>
         IO.println(
@@ -310,7 +329,10 @@ object CSVPrinter extends IOApp.Simple {
         )
       )
       .compile
-      .drain
+      .drain >> meanIO.flatMap(mean =>
+      IO.println(s"The mean age of the passengers is $mean")
+    )
+  }
 }
 ```
 @:@
