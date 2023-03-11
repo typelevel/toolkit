@@ -20,7 +20,6 @@ It currently includes:
 * [Circe] and http4s integration
 * [Decline Effect]
 * [Munit Cats Effect]
-* [fs2-data-csv]
 
 [Scala Toolkit]: https://virtuslab.com/blog/scala-toolkit-makes-scala-powerful-straight-out-of-the-box/
 [Cats]: https://typelevel.org/cats
@@ -32,4 +31,3 @@ It currently includes:
 [Circe]: https://circe.github.io/circe/
 [Decline Effect]: https://ben.kirw.in/decline/effect.html
 [Munit Cats Effect]: https://github.com/typelevel/munit-cats-effect
-[fs2-data-csv]: https://fs2-data.gnieh.org/documentation/csv/
