@@ -100,6 +100,7 @@
   <ul class="nav-list">
     <li class="level1 nav-leaf"><a href="#posting-data-and-writing-the-response-to-a-file">POSTing data and writing the response to a file</a></li>
     <li class="level1 nav-leaf"><a href="#command-line-version-of-mkstring">Command line version of mkString</a></li>
+    <li class="level1 nav-leaf"><a href="#parsing-and-transforming-a-csv-file">Parsing and transforming a CSV file</a></li>
   </ul>
 
   <p class="footer"></p>
@@ -253,6 +254,171 @@
   </span><span class="keyword">def</span><span> </span><span class="declaration-name">main</span><span> = (</span><span class="identifier">prefix</span><span>, </span><span class="identifier">delimiter</span><span>, </span><span class="identifier">suffix</span><span>).</span><span class="identifier">mapN</span><span> { (</span><span class="identifier">pre</span><span>, </span><span class="identifier">delim</span><span>, </span><span class="identifier">post</span><span>) =&gt;
     </span><span class="keyword">val</span><span> </span><span class="identifier">stream</span><span> = </span><span class="type-name">Stream</span><span>(</span><span class="identifier">pre</span><span>) ++ </span><span class="identifier">stringStream</span><span>.</span><span class="identifier">intersperse</span><span>(</span><span class="identifier">delim</span><span>) ++ </span><span class="type-name">Stream</span><span>(</span><span class="identifier">post</span><span>)
     </span><span class="identifier">stream</span><span>.</span><span class="identifier">foreach</span><span>(</span><span class="type-name">IO</span><span>.</span><span class="identifier">print</span><span>).</span><span class="identifier">compile</span><span>.</span><span class="identifier">drain</span><span>.</span><span class="identifier">as</span><span>(</span><span class="type-name">ExitCode</span><span>.</span><span class="type-name">Success</span><span>)
+  }
+}</span></code></pre>
+          </div>
+        </div>
+        
+        <h2 id="parsing-and-transforming-a-csv-file" class="section"><a class="anchor-link left" href="#parsing-and-transforming-a-csv-file"><i class="icofont-laika link">&#xef71;</i></a>Parsing and transforming a CSV file</h2>
+        <p>Here, <a href="https://fs2-data.gnieh.org/documentation/csv/">fs2-data-csv</a> is used to read and parse a comma separated file. 
+        Manual encoders and decoders are defined for our <code>Passenger</code>s to show you how to do everything from scratch.</p>
+        <p>Let&#39;s start with a CSV file that has records of fictious passengers registered for a flight:</p>
+        <pre><code>id,First Name,Age,flight number,destination
+1,Seyton,44,WX122,Tanzania
+2,Lina,,UX199,Greenland
+3,Grogu,,SW999,Singapore</code></pre>
+        <div class="tab-container" data-tab-group="scala-version">
+          <ul class="tab-group">
+            <li class="tab active" data-choice-name="scala-3"><a href="#">Scala 3</a></li>
+            <li class="tab" data-choice-name="scala-2"><a href="#">Scala 2</a></li>
+          </ul>
+          <div class="tab-content active" data-choice-name="scala-3">
+            <pre><code class="nohighlight"><span class="comment">//&gt; using lib &quot;org.typelevel::toolkit::0.0.2&quot;
+</span><span>
+</span><span class="keyword">import</span><span> </span><span class="identifier">cats</span><span>.</span><span class="identifier">effect</span><span>.*
+</span><span class="keyword">import</span><span> </span><span class="identifier">fs2</span><span>.</span><span class="identifier">text</span><span>
+</span><span class="keyword">import</span><span> </span><span class="identifier">fs2</span><span>.</span><span class="identifier">data</span><span>.</span><span class="identifier">csv</span><span>.*
+</span><span class="keyword">import</span><span> </span><span class="identifier">fs2</span><span>.</span><span class="identifier">data</span><span>.</span><span class="identifier">csv</span><span>.</span><span class="identifier">generic</span><span>.</span><span class="identifier">semiauto</span><span>.*
+</span><span class="keyword">import</span><span> </span><span class="identifier">fs2</span><span>.</span><span class="identifier">io</span><span>.</span><span class="identifier">file</span><span>.{</span><span class="type-name">Path</span><span>, </span><span class="type-name">Flags</span><span>, </span><span class="type-name">Files</span><span>}
+</span><span class="keyword">import</span><span> </span><span class="identifier">cats</span><span>.</span><span class="identifier">data</span><span>.</span><span class="type-name">NonEmptyList</span><span>
+
+</span><span class="keyword">case</span><span> </span><span class="keyword">class</span><span> </span><span class="type-name">Passenger</span><span>(
+    </span><span class="identifier">id</span><span>: </span><span class="type-name">Long</span><span>,
+    </span><span class="identifier">firstName</span><span>: </span><span class="type-name">String</span><span>,
+    </span><span class="identifier">age</span><span>: </span><span class="type-name">Either</span><span>[</span><span class="type-name">String</span><span>, </span><span class="type-name">Int</span><span>],
+    </span><span class="identifier">flightNumber</span><span>: </span><span class="type-name">String</span><span>,
+    </span><span class="identifier">destination</span><span>: </span><span class="type-name">String</span><span>
+)
+
+</span><span class="keyword">object</span><span> </span><span class="type-name">Passenger</span><span>:
+  </span><span class="comment">// Here we define a manual decoder for each row in our CSV
+</span><span>  </span><span class="keyword">given</span><span> </span><span class="identifier">csvRowDecoder</span><span>: </span><span class="type-name">CsvRowDecoder</span><span>[</span><span class="type-name">Passenger</span><span>, </span><span class="type-name">String</span><span>] </span><span class="keyword">with</span><span>
+    </span><span class="keyword">def</span><span> </span><span class="declaration-name">apply</span><span>(</span><span class="identifier">row</span><span>: </span><span class="type-name">CsvRow</span><span>[</span><span class="type-name">String</span><span>]): </span><span class="type-name">DecoderResult</span><span>[</span><span class="type-name">Passenger</span><span>] =
+      </span><span class="keyword">for</span><span>
+        </span><span class="identifier">id</span><span> &lt;- </span><span class="identifier">row</span><span>.</span><span class="identifier">as</span><span>[</span><span class="type-name">Long</span><span>](</span><span class="string-literal">&quot;id&quot;</span><span>)
+        </span><span class="identifier">firstName</span><span> &lt;- </span><span class="identifier">row</span><span>.</span><span class="identifier">as</span><span>[</span><span class="type-name">String</span><span>](</span><span class="string-literal">&quot;First Name&quot;</span><span>)
+        </span><span class="identifier">ageOpt</span><span> &lt;- </span><span class="identifier">row</span><span>.</span><span class="identifier">asNonEmpty</span><span>[</span><span class="type-name">Int</span><span>](</span><span class="string-literal">&quot;Age&quot;</span><span>)
+        </span><span class="identifier">flightNumber</span><span> &lt;- </span><span class="identifier">row</span><span>.</span><span class="identifier">as</span><span>[</span><span class="type-name">String</span><span>](</span><span class="string-literal">&quot;flight number&quot;</span><span>)
+        </span><span class="identifier">destination</span><span> &lt;- </span><span class="identifier">row</span><span>.</span><span class="identifier">as</span><span>[</span><span class="type-name">String</span><span>](</span><span class="string-literal">&quot;destination&quot;</span><span>)
+      </span><span class="keyword">yield</span><span>
+        </span><span class="keyword">val</span><span> </span><span class="identifier">age</span><span> = </span><span class="identifier">ageOpt</span><span>.</span><span class="identifier">toRight</span><span>[</span><span class="type-name">String</span><span>](</span><span class="string-literal">&quot;N/A&quot;</span><span>)
+        </span><span class="type-name">Passenger</span><span>(</span><span class="identifier">id</span><span>, </span><span class="identifier">firstName</span><span>, </span><span class="identifier">age</span><span>, </span><span class="identifier">flightNumber</span><span>, </span><span class="identifier">destination</span><span>)
+
+    </span><span class="comment">// Here we define a manual encoder for encoding Passenger classes to a CSV
+</span><span>    </span><span class="keyword">given</span><span> </span><span class="identifier">csvRowEncoder</span><span>: </span><span class="type-name">CsvRowEncoder</span><span>[</span><span class="type-name">Passenger</span><span>, </span><span class="type-name">String</span><span>] </span><span class="keyword">with</span><span>
+      </span><span class="keyword">def</span><span> </span><span class="declaration-name">apply</span><span>(</span><span class="identifier">p</span><span>: </span><span class="type-name">Passenger</span><span>): </span><span class="type-name">CsvRow</span><span>[</span><span class="type-name">String</span><span>] =
+        </span><span class="type-name">CsvRow</span><span>.</span><span class="identifier">fromNelHeaders</span><span>(
+          </span><span class="type-name">NonEmptyList</span><span>.</span><span class="identifier">of</span><span>(
+            (</span><span class="identifier">p</span><span>.</span><span class="identifier">firstName</span><span>, </span><span class="string-literal">&quot;first_name&quot;</span><span>),
+            (</span><span class="identifier">p</span><span>.</span><span class="identifier">age</span><span>.</span><span class="identifier">toString</span><span>(), </span><span class="string-literal">&quot;age&quot;</span><span>),
+            (</span><span class="identifier">p</span><span>.</span><span class="identifier">flightNumber</span><span>, </span><span class="string-literal">&quot;flight_number&quot;</span><span>),
+            (</span><span class="identifier">p</span><span>.</span><span class="identifier">destination</span><span>, </span><span class="string-literal">&quot;destination&quot;</span><span>)
+          )
+        )
+
+</span><span class="keyword">val</span><span> </span><span class="identifier">input</span><span> = </span><span class="type-name">Files</span><span>[</span><span class="type-name">IO</span><span>]
+  .</span><span class="identifier">readAll</span><span>(</span><span class="type-name">Path</span><span>(</span><span class="string-literal">&quot;./example.csv&quot;</span><span>), </span><span class="number-literal">1024</span><span>, </span><span class="type-name">Flags</span><span>.</span><span class="type-name">Read</span><span>)
+  .</span><span class="identifier">through</span><span>(</span><span class="identifier">text</span><span>.</span><span class="identifier">utf8</span><span>.</span><span class="identifier">decode</span><span>)
+  .</span><span class="identifier">through</span><span>(</span><span class="identifier">decodeUsingHeaders</span><span>[</span><span class="type-name">Passenger</span><span>]())
+
+</span><span class="keyword">object</span><span> </span><span class="type-name">CSVPrinter</span><span> </span><span class="keyword">extends</span><span> </span><span class="type-name">IOApp</span><span>.</span><span class="type-name">Simple</span><span>:
+
+  </span><span class="keyword">val</span><span> </span><span class="identifier">run</span><span>: </span><span class="type-name">IO</span><span>[</span><span class="type-name">Unit</span><span>] =
+    </span><span class="comment">// Let&#39;s do an aggregation of all the values in the age column
+</span><span>    </span><span class="keyword">val</span><span> </span><span class="identifier">meanIO</span><span> =
+      </span><span class="identifier">input</span><span>
+        .</span><span class="identifier">foldMap</span><span>(</span><span class="identifier">p</span><span> =&gt; (</span><span class="identifier">p</span><span>.</span><span class="identifier">age</span><span>.</span><span class="identifier">getOrElse</span><span>(</span><span class="number-literal">0</span><span>), </span><span class="number-literal">1</span><span>))
+        .</span><span class="identifier">compile</span><span>
+        .</span><span class="identifier">lastOrError</span><span>
+        .</span><span class="identifier">map</span><span>((</span><span class="identifier">sum</span><span>, </span><span class="identifier">count</span><span>) =&gt; </span><span class="identifier">sum</span><span> / </span><span class="identifier">count</span><span>)
+
+    </span><span class="identifier">input</span><span>
+      .</span><span class="identifier">evalTap</span><span>(</span><span class="identifier">p</span><span> =&gt;
+        </span><span class="type-name">IO</span><span>.</span><span class="identifier">println</span><span>(
+          </span><span class="string-literal">s&quot;</span><span class="substitution">${p.firstName}</span><span class="string-literal"> is taking flight: </span><span class="substitution">${p.flightNumber}</span><span class="string-literal"> to </span><span class="substitution">${p.destination}</span><span class="string-literal">&quot;</span><span>
+        )
+      )
+      .</span><span class="identifier">compile</span><span>
+      .</span><span class="identifier">drain</span><span> &gt;&gt; </span><span class="identifier">meanIO</span><span>.</span><span class="identifier">flatMap</span><span>(</span><span class="identifier">mean</span><span> =&gt;
+      </span><span class="type-name">IO</span><span>.</span><span class="identifier">println</span><span>(</span><span class="string-literal">s&quot;The mean age of the passengers is </span><span class="substitution">$mean</span><span class="string-literal">&quot;</span><span>)
+    )</span></code></pre>
+          </div>
+          <div class="tab-content" data-choice-name="scala-2">
+            <pre><code class="nohighlight"><span class="comment">//&gt; using lib &quot;org.typelevel::toolkit::0.0.2&quot;
+</span><span>
+</span><span class="keyword">import</span><span> </span><span class="identifier">cats</span><span>.</span><span class="identifier">effect</span><span>.</span><span class="identifier">_</span><span>
+</span><span class="keyword">import</span><span> </span><span class="identifier">fs2</span><span>.</span><span class="identifier">text</span><span>
+</span><span class="keyword">import</span><span> </span><span class="identifier">fs2</span><span>.</span><span class="identifier">data</span><span>.</span><span class="identifier">csv</span><span>.</span><span class="identifier">_</span><span>
+</span><span class="keyword">import</span><span> </span><span class="identifier">fs2</span><span>.</span><span class="identifier">data</span><span>.</span><span class="identifier">csv</span><span>.</span><span class="identifier">generic</span><span>.</span><span class="identifier">semiauto</span><span>.</span><span class="identifier">_</span><span>
+</span><span class="keyword">import</span><span> </span><span class="identifier">fs2</span><span>.</span><span class="identifier">io</span><span>.</span><span class="identifier">file</span><span>.{</span><span class="type-name">Path</span><span>, </span><span class="type-name">Flags</span><span>, </span><span class="type-name">Files</span><span>}
+</span><span class="keyword">import</span><span> </span><span class="identifier">cats</span><span>.</span><span class="identifier">data</span><span>.</span><span class="type-name">NonEmptyList</span><span>
+
+</span><span class="keyword">case</span><span> </span><span class="keyword">class</span><span> </span><span class="type-name">Passenger</span><span>(
+    </span><span class="identifier">id</span><span>: </span><span class="type-name">Long</span><span>,
+    </span><span class="identifier">firstName</span><span>: </span><span class="type-name">String</span><span>,
+    </span><span class="identifier">age</span><span>: </span><span class="type-name">Either</span><span>[</span><span class="type-name">String</span><span>, </span><span class="type-name">Int</span><span>],
+    </span><span class="identifier">flightNumber</span><span>: </span><span class="type-name">String</span><span>,
+    </span><span class="identifier">destination</span><span>: </span><span class="type-name">String</span><span>
+)
+
+</span><span class="keyword">object</span><span> </span><span class="type-name">Passenger</span><span> {
+  </span><span class="comment">// Here we define a manual decoder for each row in our CSV
+</span><span>  </span><span class="keyword">implicit</span><span> </span><span class="keyword">val</span><span> </span><span class="identifier">csvRowDecoder</span><span>: </span><span class="type-name">CsvRowDecoder</span><span>[</span><span class="type-name">Passenger</span><span>, </span><span class="type-name">String</span><span>] =
+    </span><span class="keyword">new</span><span> </span><span class="type-name">CsvRowDecoder</span><span>[</span><span class="type-name">Passenger</span><span>, </span><span class="type-name">String</span><span>] {
+      </span><span class="keyword">def</span><span> </span><span class="declaration-name">apply</span><span>(</span><span class="identifier">row</span><span>: </span><span class="type-name">CsvRow</span><span>[</span><span class="type-name">String</span><span>]): </span><span class="type-name">DecoderResult</span><span>[</span><span class="type-name">Passenger</span><span>] =
+        </span><span class="keyword">for</span><span> {
+          </span><span class="identifier">id</span><span> &lt;- </span><span class="identifier">row</span><span>.</span><span class="identifier">as</span><span>[</span><span class="type-name">Long</span><span>](</span><span class="string-literal">&quot;id&quot;</span><span>)
+          </span><span class="identifier">firstName</span><span> &lt;- </span><span class="identifier">row</span><span>.</span><span class="identifier">as</span><span>[</span><span class="type-name">String</span><span>](</span><span class="string-literal">&quot;First Name&quot;</span><span>)
+          </span><span class="identifier">ageOpt</span><span> &lt;- </span><span class="identifier">row</span><span>.</span><span class="identifier">asNonEmpty</span><span>[</span><span class="type-name">Int</span><span>](</span><span class="string-literal">&quot;Age&quot;</span><span>)
+          </span><span class="identifier">flightNumber</span><span> &lt;- </span><span class="identifier">row</span><span>.</span><span class="identifier">as</span><span>[</span><span class="type-name">String</span><span>](</span><span class="string-literal">&quot;flight number&quot;</span><span>)
+          </span><span class="identifier">destination</span><span> &lt;- </span><span class="identifier">row</span><span>.</span><span class="identifier">as</span><span>[</span><span class="type-name">String</span><span>](</span><span class="string-literal">&quot;destination&quot;</span><span>)
+        } </span><span class="keyword">yield</span><span> {
+          </span><span class="keyword">val</span><span> </span><span class="identifier">age</span><span> = </span><span class="identifier">ageOpt</span><span>.</span><span class="identifier">toRight</span><span>[</span><span class="type-name">String</span><span>](</span><span class="string-literal">&quot;N/A&quot;</span><span>)
+          </span><span class="type-name">Passenger</span><span>(</span><span class="identifier">id</span><span>, </span><span class="identifier">firstName</span><span>, </span><span class="identifier">age</span><span>, </span><span class="identifier">flightNumber</span><span>, </span><span class="identifier">destination</span><span>)
+        }
+    }
+
+  </span><span class="comment">// Here we define a manual encoder for encoding Passenger classes to a CSV
+</span><span>  </span><span class="keyword">implicit</span><span> </span><span class="keyword">val</span><span> </span><span class="identifier">csvRowEncoder</span><span>: </span><span class="type-name">CsvRowEncoder</span><span>[</span><span class="type-name">Passenger</span><span>, </span><span class="type-name">String</span><span>] =
+    </span><span class="keyword">new</span><span> </span><span class="type-name">CsvRowEncoder</span><span>[</span><span class="type-name">Passenger</span><span>, </span><span class="type-name">String</span><span>] {
+      </span><span class="keyword">def</span><span> </span><span class="declaration-name">apply</span><span>(</span><span class="identifier">p</span><span>: </span><span class="type-name">Passenger</span><span>): </span><span class="type-name">CsvRow</span><span>[</span><span class="type-name">String</span><span>] =
+        </span><span class="type-name">CsvRow</span><span>.</span><span class="identifier">fromNelHeaders</span><span>(
+          </span><span class="type-name">NonEmptyList</span><span>.</span><span class="identifier">of</span><span>(
+            (</span><span class="identifier">p</span><span>.</span><span class="identifier">firstName</span><span>, </span><span class="string-literal">&quot;first_name&quot;</span><span>),
+            (</span><span class="identifier">p</span><span>.</span><span class="identifier">age</span><span>.</span><span class="identifier">toString</span><span>(), </span><span class="string-literal">&quot;age&quot;</span><span>),
+            (</span><span class="identifier">p</span><span>.</span><span class="identifier">flightNumber</span><span>, </span><span class="string-literal">&quot;flight_number&quot;</span><span>),
+            (</span><span class="identifier">p</span><span>.</span><span class="identifier">destination</span><span>, </span><span class="string-literal">&quot;destination&quot;</span><span>)
+          )
+        )
+    }
+}
+
+</span><span class="keyword">object</span><span> </span><span class="type-name">CSVPrinter</span><span> </span><span class="keyword">extends</span><span> </span><span class="type-name">IOApp</span><span>.</span><span class="type-name">Simple</span><span> {
+  </span><span class="keyword">val</span><span> </span><span class="identifier">input</span><span> = </span><span class="type-name">Files</span><span>[</span><span class="type-name">IO</span><span>]
+    .</span><span class="identifier">readAll</span><span>(</span><span class="type-name">Path</span><span>(</span><span class="string-literal">&quot;./example.csv&quot;</span><span>), </span><span class="number-literal">1024</span><span>, </span><span class="type-name">Flags</span><span>.</span><span class="type-name">Read</span><span>)
+    .</span><span class="identifier">through</span><span>(</span><span class="identifier">text</span><span>.</span><span class="identifier">utf8</span><span>.</span><span class="identifier">decode</span><span>)
+    .</span><span class="identifier">through</span><span>(</span><span class="identifier">decodeUsingHeaders</span><span>[</span><span class="type-name">Passenger</span><span>]())
+
+
+  </span><span class="keyword">val</span><span> </span><span class="identifier">run</span><span>: </span><span class="type-name">IO</span><span>[</span><span class="type-name">Unit</span><span>] = {
+    </span><span class="comment">// Let&#39;s do an aggregation of all the values in the age column
+</span><span>    </span><span class="keyword">val</span><span> </span><span class="identifier">meanIO</span><span> =
+      </span><span class="identifier">input</span><span>
+        .</span><span class="identifier">foldMap</span><span>(</span><span class="identifier">p</span><span> =&gt; (</span><span class="identifier">p</span><span>.</span><span class="identifier">age</span><span>.</span><span class="identifier">getOrElse</span><span>(</span><span class="number-literal">0</span><span>), </span><span class="number-literal">1</span><span>))
+        .</span><span class="identifier">compile</span><span>
+        .</span><span class="identifier">lastOrError</span><span>
+        .</span><span class="identifier">map</span><span>({ </span><span class="keyword">case</span><span> (</span><span class="identifier">sum</span><span>, </span><span class="identifier">count</span><span>) =&gt; </span><span class="identifier">sum</span><span> / </span><span class="identifier">count</span><span>})
+
+    </span><span class="identifier">input</span><span>
+      .</span><span class="identifier">evalTap</span><span>(</span><span class="identifier">p</span><span> =&gt;
+        </span><span class="type-name">IO</span><span>.</span><span class="identifier">println</span><span>(
+          </span><span class="string-literal">s&quot;</span><span class="substitution">${p.firstName}</span><span class="string-literal"> is taking flight: </span><span class="substitution">${p.flightNumber}</span><span class="string-literal"> to </span><span class="substitution">${p.destination}</span><span class="string-literal">&quot;</span><span>
+        )
+      )
+      .</span><span class="identifier">compile</span><span>
+      .</span><span class="identifier">drain</span><span> &gt;&gt; </span><span class="identifier">meanIO</span><span>.</span><span class="identifier">flatMap</span><span>(</span><span class="identifier">mean</span><span> =&gt;
+      </span><span class="type-name">IO</span><span>.</span><span class="identifier">println</span><span>(</span><span class="string-literal">s&quot;The mean age of the passengers is </span><span class="substitution">$mean</span><span class="string-literal">&quot;</span><span>)
+    )
   }
 }</span></code></pre>
           </div>
