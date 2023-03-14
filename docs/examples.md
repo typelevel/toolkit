@@ -233,7 +233,8 @@ val input = Files[IO]
 
 object CSVPrinter extends IOApp.Simple:
 
-  /** First we'll do some logging for each row, then calculate and print the mean age */
+  /** First we'll do some logging for each row, 
+    * and then calculate and print the mean age */
   val run =
     input
       .evalTap(p =>
@@ -309,7 +310,8 @@ object CSVPrinter extends IOApp.Simple {
     .through(decodeUsingHeaders[Passenger]())
 
 
-  /** First we'll do some logging for each row, then calculate and print the mean age */
+  /** First we'll do some logging for each row, 
+    * and then calculate and print the mean age */
   val run =
     input
       .evalTap(p =>
