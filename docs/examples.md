@@ -233,25 +233,22 @@ val input = Files[IO]
 
 object CSVPrinter extends IOApp.Simple:
 
-  val run: IO[Unit] =
-    // Let's do an aggregation of all the values in the age column
-    val meanIO =
-      input
-        .foldMap(p => (p.age.getOrElse(0), 1))
-        .compile
-        .lastOrError
-        .map((sum, count) => sum / count)
-
+  /** First we'll do some logging for each row, 
+    * and then calculate and print the mean age */
+  val run =
     input
       .evalTap(p =>
         IO.println(
           s"${p.firstName} is taking flight: ${p.flightNumber} to ${p.destination}"
         )
       )
+      .collect({ case Passenger(_, _, Right(age), _, _) => age })
+      .foldMap(age => (age, 1))
       .compile
-      .drain >> meanIO.flatMap(mean =>
-      IO.println(s"The mean age of the passengers is $mean")
-    )
+      .lastOrError
+      .flatMap((sum, count) =>
+        IO.println(s"The mean age of the passengers is ${sum / count}")
+      )
 ```
 
 
@@ -313,26 +310,22 @@ object CSVPrinter extends IOApp.Simple {
     .through(decodeUsingHeaders[Passenger]())
 
 
-  val run: IO[Unit] = {
-    // Let's do an aggregation of all the values in the age column
-    val meanIO =
-      input
-        .foldMap(p => (p.age.getOrElse(0), 1))
-        .compile
-        .lastOrError
-        .map({ case (sum, count) => sum / count})
-
+  /** First we'll do some logging for each row, 
+    * and then calculate and print the mean age */
+  val run =
     input
       .evalTap(p =>
         IO.println(
           s"${p.firstName} is taking flight: ${p.flightNumber} to ${p.destination}"
         )
       )
+      .collect({ case Passenger(_, _, Right(age), _, _) => age })
+      .foldMap(age => (age, 1))
       .compile
-      .drain >> meanIO.flatMap(mean =>
-      IO.println(s"The mean age of the passengers is $mean")
-    )
-  }
+      .lastOrError
+      .flatMap({ case (sum, count) =>
+        IO.println(s"The mean age of the passengers is ${sum / count}")
+      })
 }
 ```
 @:@
