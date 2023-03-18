@@ -323,25 +323,22 @@
 
 </span><span class="keyword">object</span><span> </span><span class="type-name">CSVPrinter</span><span> </span><span class="keyword">extends</span><span> </span><span class="type-name">IOApp</span><span>.</span><span class="type-name">Simple</span><span>:
 
-  </span><span class="keyword">val</span><span> </span><span class="identifier">run</span><span>: </span><span class="type-name">IO</span><span>[</span><span class="type-name">Unit</span><span>] =
-    </span><span class="comment">// Let&#39;s do an aggregation of all the values in the age column
-</span><span>    </span><span class="keyword">val</span><span> </span><span class="identifier">meanIO</span><span> =
-      </span><span class="identifier">input</span><span>
-        .</span><span class="identifier">foldMap</span><span>(</span><span class="identifier">p</span><span> =&gt; (</span><span class="identifier">p</span><span>.</span><span class="identifier">age</span><span>.</span><span class="identifier">getOrElse</span><span>(</span><span class="number-literal">0</span><span>), </span><span class="number-literal">1</span><span>))
-        .</span><span class="identifier">compile</span><span>
-        .</span><span class="identifier">lastOrError</span><span>
-        .</span><span class="identifier">map</span><span>((</span><span class="identifier">sum</span><span>, </span><span class="identifier">count</span><span>) =&gt; </span><span class="identifier">sum</span><span> / </span><span class="identifier">count</span><span>)
-
+  </span><span class="comment">/** First we&#39;ll do some logging for each row, 
+    * and then calculate and print the mean age */</span><span>
+  </span><span class="keyword">val</span><span> </span><span class="identifier">run</span><span> =
     </span><span class="identifier">input</span><span>
       .</span><span class="identifier">evalTap</span><span>(</span><span class="identifier">p</span><span> =&gt;
         </span><span class="type-name">IO</span><span>.</span><span class="identifier">println</span><span>(
           </span><span class="string-literal">s&quot;</span><span class="substitution">${p.firstName}</span><span class="string-literal"> is taking flight: </span><span class="substitution">${p.flightNumber}</span><span class="string-literal"> to </span><span class="substitution">${p.destination}</span><span class="string-literal">&quot;</span><span>
         )
       )
+      .</span><span class="identifier">collect</span><span>({ </span><span class="keyword">case</span><span> </span><span class="type-name">Passenger</span><span>(</span><span class="identifier">_</span><span>, </span><span class="identifier">_</span><span>, </span><span class="type-name">Right</span><span>(</span><span class="identifier">age</span><span>), </span><span class="identifier">_</span><span>, </span><span class="identifier">_</span><span>) =&gt; </span><span class="identifier">age</span><span> })
+      .</span><span class="identifier">foldMap</span><span>(</span><span class="identifier">age</span><span> =&gt; (</span><span class="identifier">age</span><span>, </span><span class="number-literal">1</span><span>))
       .</span><span class="identifier">compile</span><span>
-      .</span><span class="identifier">drain</span><span> &gt;&gt; </span><span class="identifier">meanIO</span><span>.</span><span class="identifier">flatMap</span><span>(</span><span class="identifier">mean</span><span> =&gt;
-      </span><span class="type-name">IO</span><span>.</span><span class="identifier">println</span><span>(</span><span class="string-literal">s&quot;The mean age of the passengers is </span><span class="substitution">$mean</span><span class="string-literal">&quot;</span><span>)
-    )</span></code></pre>
+      .</span><span class="identifier">lastOrError</span><span>
+      .</span><span class="identifier">flatMap</span><span>((</span><span class="identifier">sum</span><span>, </span><span class="identifier">count</span><span>) =&gt;
+        </span><span class="type-name">IO</span><span>.</span><span class="identifier">println</span><span>(</span><span class="string-literal">s&quot;The mean age of the passengers is </span><span class="substitution">${sum / count}</span><span class="string-literal">&quot;</span><span>)
+      )</span></code></pre>
           </div>
           <div class="tab-content" data-choice-name="scala-2">
             <pre><code class="nohighlight"><span class="comment">//&gt; using lib &quot;org.typelevel::toolkit::0.0.3&quot;
@@ -400,26 +397,22 @@
     .</span><span class="identifier">through</span><span>(</span><span class="identifier">decodeUsingHeaders</span><span>[</span><span class="type-name">Passenger</span><span>]())
 
 
-  </span><span class="keyword">val</span><span> </span><span class="identifier">run</span><span>: </span><span class="type-name">IO</span><span>[</span><span class="type-name">Unit</span><span>] = {
-    </span><span class="comment">// Let&#39;s do an aggregation of all the values in the age column
-</span><span>    </span><span class="keyword">val</span><span> </span><span class="identifier">meanIO</span><span> =
-      </span><span class="identifier">input</span><span>
-        .</span><span class="identifier">foldMap</span><span>(</span><span class="identifier">p</span><span> =&gt; (</span><span class="identifier">p</span><span>.</span><span class="identifier">age</span><span>.</span><span class="identifier">getOrElse</span><span>(</span><span class="number-literal">0</span><span>), </span><span class="number-literal">1</span><span>))
-        .</span><span class="identifier">compile</span><span>
-        .</span><span class="identifier">lastOrError</span><span>
-        .</span><span class="identifier">map</span><span>({ </span><span class="keyword">case</span><span> (</span><span class="identifier">sum</span><span>, </span><span class="identifier">count</span><span>) =&gt; </span><span class="identifier">sum</span><span> / </span><span class="identifier">count</span><span>})
-
+  </span><span class="comment">/** First we&#39;ll do some logging for each row, 
+    * and then calculate and print the mean age */</span><span>
+  </span><span class="keyword">val</span><span> </span><span class="identifier">run</span><span> =
     </span><span class="identifier">input</span><span>
       .</span><span class="identifier">evalTap</span><span>(</span><span class="identifier">p</span><span> =&gt;
         </span><span class="type-name">IO</span><span>.</span><span class="identifier">println</span><span>(
           </span><span class="string-literal">s&quot;</span><span class="substitution">${p.firstName}</span><span class="string-literal"> is taking flight: </span><span class="substitution">${p.flightNumber}</span><span class="string-literal"> to </span><span class="substitution">${p.destination}</span><span class="string-literal">&quot;</span><span>
         )
       )
+      .</span><span class="identifier">collect</span><span>({ </span><span class="keyword">case</span><span> </span><span class="type-name">Passenger</span><span>(</span><span class="identifier">_</span><span>, </span><span class="identifier">_</span><span>, </span><span class="type-name">Right</span><span>(</span><span class="identifier">age</span><span>), </span><span class="identifier">_</span><span>, </span><span class="identifier">_</span><span>) =&gt; </span><span class="identifier">age</span><span> })
+      .</span><span class="identifier">foldMap</span><span>(</span><span class="identifier">age</span><span> =&gt; (</span><span class="identifier">age</span><span>, </span><span class="number-literal">1</span><span>))
       .</span><span class="identifier">compile</span><span>
-      .</span><span class="identifier">drain</span><span> &gt;&gt; </span><span class="identifier">meanIO</span><span>.</span><span class="identifier">flatMap</span><span>(</span><span class="identifier">mean</span><span> =&gt;
-      </span><span class="type-name">IO</span><span>.</span><span class="identifier">println</span><span>(</span><span class="string-literal">s&quot;The mean age of the passengers is </span><span class="substitution">$mean</span><span class="string-literal">&quot;</span><span>)
-    )
-  }
+      .</span><span class="identifier">lastOrError</span><span>
+      .</span><span class="identifier">flatMap</span><span>({ </span><span class="keyword">case</span><span> (</span><span class="identifier">sum</span><span>, </span><span class="identifier">count</span><span>) =&gt;
+        </span><span class="type-name">IO</span><span>.</span><span class="identifier">println</span><span>(</span><span class="string-literal">s&quot;The mean age of the passengers is </span><span class="substitution">${sum / count}</span><span class="string-literal">&quot;</span><span>)
+      })
 }</span></code></pre>
           </div>
         </div>
