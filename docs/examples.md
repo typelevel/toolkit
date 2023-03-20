@@ -368,7 +368,7 @@ object Converter extends IOApp.Simple:
     converter.compile.drain
 ```
 @:choice(scala-2)
-```scala mdoc:silent
+```scala mdoc:reset:silent
 //> using lib "org.typelevel::toolkit::@VERSION@"
 
 import cats.effect.{IO, IOApp}
