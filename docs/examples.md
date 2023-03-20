@@ -331,10 +331,83 @@ object CSVPrinter extends IOApp.Simple {
 @:@
 
 
+## Parsing and transforming raw data
+This example was written by [Thanh Le] for the [scalachess library](https://github.com/lichess-org/scalachess/pull/352).
+
+@:select(scala-version)
+
+@:choice(scala-3)
+
+```scala mdoc:silent
+//> using lib "org.typelevel::toolkit::@VERSION@"
+
+import cats.effect.{IO, IOApp}
+import fs2.{Stream, text}
+import fs2.io.file.{Files, Path}
+
+object Converter extends IOApp.Simple:
+
+  val converter: Stream[IO, Unit] =
+    def raw2Perft(id: Long, raw: String): String =
+      val list = raw.split(";").zipWithIndex.map {
+        case (epd, 0) => s"epd ${epd}"
+        case (s, i)   => s"perft $i ${s.split(" ")(1)}"
+      }
+      list.mkString(s"id $id\n", "\n", "\n")
+
+    Files[IO]
+      .readUtf8Lines(Path("fischer.epd"))
+      .filter(s => !s.trim.isEmpty)
+      .zipWithIndex
+      .map((x, i) => raw2Perft(i, x))
+      .intersperse("\n")
+      .through(text.utf8.encode)
+      .through(Files[IO].writeAll(Path("chess960.perft")))
+
+  def run: IO[Unit] =
+    converter.compile.drain
+```
+@:choice(scala-2)
+```scala mdoc:silent
+//> using lib "org.typelevel::toolkit::@VERSION@"
+
+import cats.effect.{IO, IOApp}
+import fs2.{Stream, text}
+import fs2.io.file.{Files, Path}
+
+object Converter extends IOApp.Simple {
+
+  val converter: Stream[IO, Unit] = {
+
+    def raw2Perft(id: Long, raw: String): String = {
+      val list = raw.split(";").zipWithIndex.map {
+        case (epd, 0) => s"epd ${epd}"
+        case (s, i)   => s"perft $i ${s.split(" ")(1)}"
+      }
+      list.mkString(s"id $id\n", "\n", "\n")
+    }
+
+    Files[IO]
+      .readUtf8Lines(Path("fischer.epd"))
+      .filter(s => !s.trim.isEmpty)
+      .zipWithIndex
+      .map { case (x, i) => raw2Perft(i, x) }
+      .intersperse("\n")
+      .through(text.utf8.encode)
+      .through(Files[IO].writeAll(Path("chess960.perft")))
+
+  }
+
+  def run: IO[Unit] =
+    converter.compile.drain
+}
+```
+@:@
+
 [fs2]: https://fs2.io/#/
 [fs2-data-csv]: https://fs2-data.gnieh.org/documentation/csv/
 [decline]: https://ben.kirw.in/decline/
 [scala-native]: https://scala-native.org/en/stable/
 [Scala CLI]: https://scala-cli.virtuslab.org/
 [Koroeskohr]: https://github.com/Koroeskohr
-
+[Thanh Le]: https://github.com/lenguyenthanh
