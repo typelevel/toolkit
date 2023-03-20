@@ -27,7 +27,8 @@ lazy val toolkit = crossProject(JVMPlatform, JSPlatform, NativePlatform)
       "io.circe" %%% "circe-jawn" % "0.14.5",
       "org.http4s" %%% "http4s-circe" % "0.23.18",
       "com.monovore" %%% "decline-effect" % "2.4.1",
-      "org.typelevel" %%% "munit-cats-effect" % "2.0.0-M3" // not % Test, on purpose :)
+      "org.scalameta" %%% "munit" % "1.0.0-M7", // not % Test, on purpose :)
+      "org.typelevel" %%% "munit-cats-effect" % "2.0.0-M3"
     ),
     mimaPreviousArtifacts := Set()
   )
