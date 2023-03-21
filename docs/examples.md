@@ -338,7 +338,7 @@ This example was written by [Thanh Le] for the [scalachess library](https://gith
 
 @:choice(scala-3)
 
-```scala mdoc:silent
+```scala mdoc:reset:silent
 //> using lib "org.typelevel::toolkit::@VERSION@"
 
 import cats.effect.{IO, IOApp}
