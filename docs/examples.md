@@ -332,7 +332,7 @@ object CSVPrinter extends IOApp.Simple {
 
 
 ## Parsing and transforming raw data
-This example was written by [Thanh Le] for the [scalachess library](https://github.com/lichess-org/scalachess/pull/352).
+This real world example was written by [Thanh Le] to convert a file for the [scalachess library](https://github.com/lichess-org/scalachess/pull/352).
 
 @:select(scala-version)
 
