@@ -332,7 +332,26 @@ object CSVPrinter extends IOApp.Simple {
 
 
 ## Parsing and transforming raw data
-This real world example was written by [Thanh Le] to convert a file for the [scalachess library](https://github.com/lichess-org/scalachess/pull/352).
+This real world example was written by [Thanh Le] to convert a file for the [scalachess library](https://github.com/lichess-org/scalachess). The file is used for testing the correctness of its legal moves generator.
+
+Start with the input:
+
+```
+bqnb1rkr/pp3ppp/3ppn2/2p5/5P2/P2P4/NPP1P1PP/BQ1BNRKR w HFhf - 2 9 ;D1 21 ;D2 528 ;D3 12189 ;D4 326672 ;D5 8146062 ;D6 227689589
+```
+
+And the end result:
+
+```
+id 0
+epd bqnb1rkr/pp3ppp/3ppn2/2p5/5P2/P2P4/NPP1P1PP/BQ1BNRKR w HFhf - 2 9
+perft 1 21
+perft 2 528
+perft 3 12189
+perft 4 326672
+perft 5 8146062
+perft 6 227689589
+```
 
 @:select(scala-version)
 
@@ -345,7 +364,7 @@ import cats.effect.{IO, IOApp}
 import fs2.{Stream, text}
 import fs2.io.file.{Files, Path}
 
-object Converter extends IOApp.Simple:
+object PerftConverter extends IOApp.Simple:
 
   val converter: Stream[IO, Unit] =
     def raw2Perft(id: Long, raw: String): String =
@@ -367,6 +386,7 @@ object Converter extends IOApp.Simple:
   def run: IO[Unit] =
     converter.compile.drain
 ```
+
 @:choice(scala-2)
 ```scala mdoc:reset:silent
 //> using lib "org.typelevel::toolkit::@VERSION@"
@@ -375,7 +395,7 @@ import cats.effect.{IO, IOApp}
 import fs2.{Stream, text}
 import fs2.io.file.{Files, Path}
 
-object Converter extends IOApp.Simple {
+object PerftConverter extends IOApp.Simple {
 
   val converter: Stream[IO, Unit] = {
 
