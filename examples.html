@@ -420,9 +420,9 @@
         
         <h2 id="parsing-and-transforming-raw-data" class="section"><a class="anchor-link left" href="#parsing-and-transforming-raw-data"><i class="icofont-laika link">&#xef71;</i></a>Parsing and transforming raw data</h2>
         <p>This real world example was written by <a href="https://github.com/lenguyenthanh">Thanh Le</a> to convert a file for the <a href="https://github.com/lichess-org/scalachess">scalachess library</a>. The file is used for testing the correctness of its legal moves generator.</p>
-        <p>Start with the input:</p>
+        <p>Start with an input file named <code>fischer.epd</code> containing:</p>
         <pre><code>bqnb1rkr/pp3ppp/3ppn2/2p5/5P2/P2P4/NPP1P1PP/BQ1BNRKR w HFhf - 2 9 ;D1 21 ;D2 528 ;D3 12189 ;D4 326672 ;D5 8146062 ;D6 227689589</code></pre>
-        <p>And the end result:</p>
+        <p>The result will be a <code>chess960.perft</code> containing:</p>
         <pre><code>id 0
 epd bqnb1rkr/pp3ppp/3ppn2/2p5/5P2/P2P4/NPP1P1PP/BQ1BNRKR w HFhf - 2 9
 perft 1 21
@@ -462,8 +462,7 @@ perft 6 227689589</code></pre>
       .</span><span class="identifier">through</span><span>(</span><span class="identifier">text</span><span>.</span><span class="identifier">utf8</span><span>.</span><span class="identifier">encode</span><span>)
       .</span><span class="identifier">through</span><span>(</span><span class="type-name">Files</span><span>[</span><span class="type-name">IO</span><span>].</span><span class="identifier">writeAll</span><span>(</span><span class="type-name">Path</span><span>(</span><span class="string-literal">&quot;chess960.perft&quot;</span><span>)))
 
-  </span><span class="keyword">def</span><span> </span><span class="declaration-name">run</span><span>: </span><span class="type-name">IO</span><span>[</span><span class="type-name">Unit</span><span>] =
-    </span><span class="identifier">converter</span><span>.</span><span class="identifier">compile</span><span>.</span><span class="identifier">drain</span></code></pre>
+  </span><span class="keyword">def</span><span> </span><span class="declaration-name">run</span><span>: </span><span class="type-name">IO</span><span>[</span><span class="type-name">Unit</span><span>] = </span><span class="identifier">converter</span><span>.</span><span class="identifier">compile</span><span>.</span><span class="identifier">drain</span></code></pre>
           </div>
           <div class="tab-content" data-choice-name="scala-2">
             <pre><code class="nohighlight"><span class="comment">//&gt; using lib &quot;org.typelevel::toolkit::0.0.4&quot;
@@ -475,7 +474,6 @@ perft 6 227689589</code></pre>
 </span><span class="keyword">object</span><span> </span><span class="type-name">PerftConverter</span><span> </span><span class="keyword">extends</span><span> </span><span class="type-name">IOApp</span><span>.</span><span class="type-name">Simple</span><span> {
 
   </span><span class="keyword">val</span><span> </span><span class="identifier">converter</span><span>: </span><span class="type-name">Stream</span><span>[</span><span class="type-name">IO</span><span>, </span><span class="type-name">Unit</span><span>] = {
-
     </span><span class="keyword">def</span><span> </span><span class="declaration-name">raw2Perft</span><span>(</span><span class="identifier">id</span><span>: </span><span class="type-name">Long</span><span>, </span><span class="identifier">raw</span><span>: </span><span class="type-name">String</span><span>): </span><span class="type-name">String</span><span> = {
       </span><span class="keyword">val</span><span> </span><span class="identifier">list</span><span> = </span><span class="identifier">raw</span><span>.</span><span class="identifier">split</span><span>(</span><span class="string-literal">&quot;;&quot;</span><span>).</span><span class="identifier">zipWithIndex</span><span>.</span><span class="identifier">map</span><span> {
         </span><span class="keyword">case</span><span> (</span><span class="identifier">epd</span><span>, </span><span class="number-literal">0</span><span>) =&gt; </span><span class="string-literal">s&quot;epd </span><span class="substitution">${epd}</span><span class="string-literal">&quot;</span><span>
@@ -492,11 +490,9 @@ perft 6 227689589</code></pre>
       .</span><span class="identifier">intersperse</span><span>(</span><span class="string-literal">&quot;</span><span class="escape-sequence">\n</span><span class="string-literal">&quot;</span><span>)
       .</span><span class="identifier">through</span><span>(</span><span class="identifier">text</span><span>.</span><span class="identifier">utf8</span><span>.</span><span class="identifier">encode</span><span>)
       .</span><span class="identifier">through</span><span>(</span><span class="type-name">Files</span><span>[</span><span class="type-name">IO</span><span>].</span><span class="identifier">writeAll</span><span>(</span><span class="type-name">Path</span><span>(</span><span class="string-literal">&quot;chess960.perft&quot;</span><span>)))
-
   }
 
-  </span><span class="keyword">def</span><span> </span><span class="declaration-name">run</span><span>: </span><span class="type-name">IO</span><span>[</span><span class="type-name">Unit</span><span>] =
-    </span><span class="identifier">converter</span><span>.</span><span class="identifier">compile</span><span>.</span><span class="identifier">drain</span><span>
+  </span><span class="keyword">def</span><span> </span><span class="declaration-name">run</span><span>: </span><span class="type-name">IO</span><span>[</span><span class="type-name">Unit</span><span>] = </span><span class="identifier">converter</span><span>.</span><span class="identifier">compile</span><span>.</span><span class="identifier">drain</span><span>
 }</span></code></pre>
           </div>
         </div>
