@@ -334,13 +334,13 @@ object CSVPrinter extends IOApp.Simple {
 ## Parsing and transforming raw data
 This real world example was written by [Thanh Le] to convert a file for the [scalachess library](https://github.com/lichess-org/scalachess). The file is used for testing the correctness of its legal moves generator.
 
-Start with the input:
+Start with an input file named `fischer.epd` containing:
 
 ```
 bqnb1rkr/pp3ppp/3ppn2/2p5/5P2/P2P4/NPP1P1PP/BQ1BNRKR w HFhf - 2 9 ;D1 21 ;D2 528 ;D3 12189 ;D4 326672 ;D5 8146062 ;D6 227689589
 ```
 
-And the end result:
+The result will be a `chess960.perft` containing:
 
 ```
 id 0
@@ -383,8 +383,7 @@ object PerftConverter extends IOApp.Simple:
       .through(text.utf8.encode)
       .through(Files[IO].writeAll(Path("chess960.perft")))
 
-  def run: IO[Unit] =
-    converter.compile.drain
+  def run: IO[Unit] = converter.compile.drain
 ```
 
 @:choice(scala-2)
@@ -398,7 +397,6 @@ import fs2.io.file.{Files, Path}
 object PerftConverter extends IOApp.Simple {
 
   val converter: Stream[IO, Unit] = {
-
     def raw2Perft(id: Long, raw: String): String = {
       val list = raw.split(";").zipWithIndex.map {
         case (epd, 0) => s"epd ${epd}"
@@ -415,11 +413,9 @@ object PerftConverter extends IOApp.Simple {
       .intersperse("\n")
       .through(text.utf8.encode)
       .through(Files[IO].writeAll(Path("chess960.perft")))
-
   }
 
-  def run: IO[Unit] =
-    converter.compile.drain
+  def run: IO[Unit] = converter.compile.drain
 }
 ```
 @:@
