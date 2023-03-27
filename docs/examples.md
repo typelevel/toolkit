@@ -331,10 +331,103 @@ object CSVPrinter extends IOApp.Simple {
 @:@
 
 
+## Parsing and transforming raw data
+This real world example was written by [Thanh Le] to convert a file for the [scalachess library](https://github.com/lichess-org/scalachess). The file is used for testing the correctness of its legal moves generator.
+
+Start with the input:
+
+```
+bqnb1rkr/pp3ppp/3ppn2/2p5/5P2/P2P4/NPP1P1PP/BQ1BNRKR w HFhf - 2 9 ;D1 21 ;D2 528 ;D3 12189 ;D4 326672 ;D5 8146062 ;D6 227689589
+```
+
+And the end result:
+
+```
+id 0
+epd bqnb1rkr/pp3ppp/3ppn2/2p5/5P2/P2P4/NPP1P1PP/BQ1BNRKR w HFhf - 2 9
+perft 1 21
+perft 2 528
+perft 3 12189
+perft 4 326672
+perft 5 8146062
+perft 6 227689589
+```
+
+@:select(scala-version)
+
+@:choice(scala-3)
+
+```scala mdoc:reset:silent
+//> using lib "org.typelevel::toolkit::@VERSION@"
+
+import cats.effect.{IO, IOApp}
+import fs2.{Stream, text}
+import fs2.io.file.{Files, Path}
+
+object PerftConverter extends IOApp.Simple:
+
+  val converter: Stream[IO, Unit] =
+    def raw2Perft(id: Long, raw: String): String =
+      val list = raw.split(";").zipWithIndex.map {
+        case (epd, 0) => s"epd ${epd}"
+        case (s, i)   => s"perft $i ${s.split(" ")(1)}"
+      }
+      list.mkString(s"id $id\n", "\n", "\n")
+
+    Files[IO]
+      .readUtf8Lines(Path("fischer.epd"))
+      .filter(s => !s.trim.isEmpty)
+      .zipWithIndex
+      .map((x, i) => raw2Perft(i, x))
+      .intersperse("\n")
+      .through(text.utf8.encode)
+      .through(Files[IO].writeAll(Path("chess960.perft")))
+
+  def run: IO[Unit] =
+    converter.compile.drain
+```
+
+@:choice(scala-2)
+```scala mdoc:reset:silent
+//> using lib "org.typelevel::toolkit::@VERSION@"
+
+import cats.effect.{IO, IOApp}
+import fs2.{Stream, text}
+import fs2.io.file.{Files, Path}
+
+object PerftConverter extends IOApp.Simple {
+
+  val converter: Stream[IO, Unit] = {
+
+    def raw2Perft(id: Long, raw: String): String = {
+      val list = raw.split(";").zipWithIndex.map {
+        case (epd, 0) => s"epd ${epd}"
+        case (s, i)   => s"perft $i ${s.split(" ")(1)}"
+      }
+      list.mkString(s"id $id\n", "\n", "\n")
+    }
+
+    Files[IO]
+      .readUtf8Lines(Path("fischer.epd"))
+      .filter(s => !s.trim.isEmpty)
+      .zipWithIndex
+      .map { case (x, i) => raw2Perft(i, x) }
+      .intersperse("\n")
+      .through(text.utf8.encode)
+      .through(Files[IO].writeAll(Path("chess960.perft")))
+
+  }
+
+  def run: IO[Unit] =
+    converter.compile.drain
+}
+```
+@:@
+
 [fs2]: https://fs2.io/#/
 [fs2-data-csv]: https://fs2-data.gnieh.org/documentation/csv/
 [decline]: https://ben.kirw.in/decline/
 [scala-native]: https://scala-native.org/en/stable/
 [Scala CLI]: https://scala-cli.virtuslab.org/
 [Koroeskohr]: https://github.com/Koroeskohr
-
+[Thanh Le]: https://github.com/lenguyenthanh
