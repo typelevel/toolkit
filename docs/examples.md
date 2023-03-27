@@ -207,7 +207,7 @@ object Passenger:
       for
         id <- row.as[Long]("id")
         firstName <- row.as[String]("First Name")
-        ageOpt <- row.asNonEmpty[Int]("Age")
+        ageOpt <- row.asOptional[Int]("Age")
         flightNumber <- row.as[String]("flight number")
         destination <- row.as[String]("destination")
       yield
@@ -279,7 +279,7 @@ object Passenger {
         for {
           id <- row.as[Long]("id")
           firstName <- row.as[String]("First Name")
-          ageOpt <- row.asNonEmpty[Int]("Age")
+          ageOpt <- row.asOptional[Int]("Age")
           flightNumber <- row.as[String]("flight number")
           destination <- row.as[String]("destination")
         } yield {
