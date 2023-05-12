@@ -19,7 +19,7 @@ lazy val toolkit = crossProject(JVMPlatform, JSPlatform, NativePlatform)
     name := "toolkit",
     libraryDependencies ++= Seq(
       "org.typelevel" %%% "cats-core" % "2.9.0",
-      "org.typelevel" %%% "cats-effect" % "3.4.11",
+      "org.typelevel" %%% "cats-effect" % "3.5.0",
       "co.fs2" %%% "fs2-io" % "3.6.1",
       "org.gnieh" %%% "fs2-data-csv" % "1.7.1",
       "org.gnieh" %%% "fs2-data-csv-generic" % "1.7.1",
