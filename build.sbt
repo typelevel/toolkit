@@ -20,7 +20,7 @@ lazy val toolkit = crossProject(JVMPlatform, JSPlatform, NativePlatform)
     libraryDependencies ++= Seq(
       "org.typelevel" %%% "cats-core" % "2.9.0",
       "org.typelevel" %%% "cats-effect" % "3.5.0",
-      "co.fs2" %%% "fs2-io" % "3.6.1",
+      "co.fs2" %%% "fs2-io" % "3.7.0",
       "org.gnieh" %%% "fs2-data-csv" % "1.7.1",
       "org.gnieh" %%% "fs2-data-csv-generic" % "1.7.1",
       "org.http4s" %%% "http4s-ember-client" % "0.23.18",
