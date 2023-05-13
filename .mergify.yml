@@ -34,3 +34,11 @@ pull_request_rules:
       add:
       - toolkit
       remove: []
+- name: Label toolkit-test PRs
+  conditions:
+  - files~=^toolkit-test/
+  actions:
+    label:
+      add:
+      - toolkit-test
+      remove: []
