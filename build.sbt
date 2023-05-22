@@ -36,6 +36,8 @@ lazy val toolkitTest = crossProject(JVMPlatform, JSPlatform, NativePlatform)
   .settings(
     name := "toolkit-test",
     libraryDependencies ++= Seq(
+      "org.typelevel" %%% "cats-core" % "2.9.0",
+      "org.typelevel" %%% "cats-effect-testkit" % "3.5.0",
       "org.scalameta" %%% "munit" % "1.0.0-M7", // not % Test, on purpose :)
       "org.typelevel" %%% "munit-cats-effect" % "2.0.0-M3"
     ),
