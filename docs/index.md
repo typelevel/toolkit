@@ -25,9 +25,16 @@ To use it with [Scala CLI] use this directive:
 
 Albeit being created to be used with [Scala CLI], typelevel-toolkit can be imported into your `build.sbt` using:
 ```scala
-libraryDependencies += "org.typelevel" %% "toolkit" % "@VERSION@"
-// for native and js
-libraryDependencies += "org.typelevel" %%% "toolkit" % "@VERSION@"
+libraryDependencies ++= Seq(
+  "org.typelevel" %% "toolkit" % "@VERSION@",
+  "org.typelevel" %% "toolkit-test" % "@VERSION@" % Test
+)
+
+// use %%% for Scala.js and Scala Native
+libraryDependencies ++= Seq(
+  "org.typelevel" %%% "toolkit" % "@VERSION@",
+  "org.typelevel" %%% "toolkit-test" % "@VERSION@" % Test
+)
 ```
 
 ## Quick Start Example

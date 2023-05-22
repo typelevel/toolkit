@@ -11,7 +11,7 @@ ThisBuild / mergifyStewardConfig ~= {
 
 ThisBuild / crossScalaVersions := Seq("2.13.10", "3.2.2")
 
-lazy val root = tlCrossRootProject.aggregate(toolkit)
+lazy val root = tlCrossRootProject.aggregate(toolkit, toolkitTest)
 
 lazy val toolkit = crossProject(JVMPlatform, JSPlatform, NativePlatform)
   .in(file("toolkit"))
@@ -26,7 +26,18 @@ lazy val toolkit = crossProject(JVMPlatform, JSPlatform, NativePlatform)
       "org.http4s" %%% "http4s-ember-client" % "0.23.19",
       "io.circe" %%% "circe-jawn" % "0.14.5",
       "org.http4s" %%% "http4s-circe" % "0.23.19",
-      "com.monovore" %%% "decline-effect" % "2.4.1",
+      "com.monovore" %%% "decline-effect" % "2.4.1"
+    ),
+    mimaPreviousArtifacts := Set()
+  )
+
+lazy val toolkitTest = crossProject(JVMPlatform, JSPlatform, NativePlatform)
+  .in(file("toolkit-test"))
+  .settings(
+    name := "toolkit-test",
+    libraryDependencies ++= Seq(
+      "org.typelevel" %%% "cats-core" % "2.9.0",
+      "org.typelevel" %%% "cats-effect-testkit" % "3.5.0",
       "org.scalameta" %%% "munit" % "1.0.0-M7", // not % Test, on purpose :)
       "org.typelevel" %%% "munit-cats-effect" % "2.0.0-M3"
     ),

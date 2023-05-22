@@ -89,11 +89,11 @@ jobs:
 
       - name: Make target directories
         if: github.event_name != 'pull_request' && (startsWith(github.ref, 'refs/tags/v') || github.ref == 'refs/heads/main')
-        run: mkdir -p toolkit/js/target target toolkit/native/target .js/target site/target toolkit/jvm/target .jvm/target .native/target project/target
+        run: mkdir -p toolkit/js/target toolkit-test/jvm/target toolkit-test/native/target target toolkit/native/target .js/target toolkit-test/js/target site/target toolkit/jvm/target .jvm/target .native/target project/target
 
       - name: Compress target directories
         if: github.event_name != 'pull_request' && (startsWith(github.ref, 'refs/tags/v') || github.ref == 'refs/heads/main')
-        run: tar cf targets.tar toolkit/js/target target toolkit/native/target .js/target site/target toolkit/jvm/target .jvm/target .native/target project/target
+        run: tar cf targets.tar toolkit/js/target toolkit-test/jvm/target toolkit-test/native/target target toolkit/native/target .js/target toolkit-test/js/target site/target toolkit/jvm/target .jvm/target .native/target project/target
 
       - name: Upload target directories
         if: github.event_name != 'pull_request' && (startsWith(github.ref, 'refs/tags/v') || github.ref == 'refs/heads/main')
