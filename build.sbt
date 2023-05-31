@@ -9,7 +9,7 @@ ThisBuild / mergifyStewardConfig ~= {
   _.map(_.copy(author = "typelevel-steward[bot]"))
 }
 
-ThisBuild / crossScalaVersions := Seq("2.13.10", "3.2.2")
+ThisBuild / crossScalaVersions := Seq("2.13.10", "3.3.0")
 
 lazy val root = tlCrossRootProject.aggregate(toolkit, toolkitTest)
 
@@ -49,7 +49,7 @@ lazy val docs = project
   .enablePlugins(TypelevelSitePlugin)
   .dependsOn(toolkit.jvm)
   .settings(
-    scalaVersion := "3.2.2",
+    scalaVersion := "3.3.0",
     tlSiteHelium ~= {
       _.site.mainNavigation(
         appendLinks = List(

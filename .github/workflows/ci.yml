@@ -109,7 +109,7 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest]
-        scala: [3.2.2]
+        scala: [3.3.0]
         java: [temurin@17]
     runs-on: ${{ matrix.os }}
     steps:
@@ -230,7 +230,7 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest]
-        scala: [3.2.2]
+        scala: [3.3.0]
         java: [temurin@17]
     runs-on: ${{ matrix.os }}
     steps:
@@ -269,7 +269,7 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest]
-        scala: [3.2.2]
+        scala: [3.3.0]
         java: [temurin@17]
     runs-on: ${{ matrix.os }}
     steps:
