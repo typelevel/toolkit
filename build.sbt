@@ -1,7 +1,7 @@
 import laika.helium.config._
 import laika.rewrite.nav.{ChoiceConfig, Selections, SelectionConfig}
 
-ThisBuild / tlBaseVersion := "0.0"
+ThisBuild / tlBaseVersion := "0.1"
 ThisBuild / startYear := Some(2023)
 ThisBuild / tlSitePublishBranch := Some("main")
 ThisBuild / githubWorkflowJavaVersions := Seq(JavaSpec.temurin("17"))
