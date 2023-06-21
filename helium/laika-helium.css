@@ -31,7 +31,7 @@
   --header-font: "Lato", sans-serif;
   --code-font: "Fira Mono", monospace;
   --body-font-size: 15px;
-  --code-font-size: 14px;
+  --code-font-size: 0.9em;
   --small-font-size: 12px;
   --title-font-size: 34px;
   --header2-font-size: 28px;
@@ -772,6 +772,18 @@ ul.nav-list, #page-nav ul {
     display: inline-block;
   }
 }
+@media (max-width: 1450px) {
+  #page-nav.all-screens {
+    display: block;
+    position: static;
+    width: 100%;
+    max-width: var(--content-width);
+    background-color: transparent;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 75px 45px 10px 45px;
+  }
+}
 
 .icofont-laika {
   font-size: 1.75em;
@@ -783,8 +795,7 @@ pre {
   border-radius: 5px;
   padding: 12px 9px 9px 15px;
   margin: 0 0 var(--block-spacing);
-  font-size: var(--code-font-size);
-  line-height: 21px;
+  line-height: 1.4;
   word-break: break-all;
   word-wrap: break-word;
   white-space: pre-wrap;
@@ -798,7 +809,6 @@ code {
   padding: 0 0.1em;
 }
 pre code {
-  font-size: var(--code-font-size);
   color: var(--syntax-base5);
   background-color: transparent;
   padding: 0;
