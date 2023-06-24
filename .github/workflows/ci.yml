@@ -230,7 +230,7 @@ jobs:
 
       - name: sbt update
         if: matrix.java == 'temurin@17' && steps.setup-java-temurin-17.outputs.cache-hit == 'false'
-        run: sbt '++ ${{ matrix.scala }}' reload +update
+        run: sbt reload +update
 
       - name: Submit Dependencies
         uses: scalacenter/sbt-dependency-submission@v2
