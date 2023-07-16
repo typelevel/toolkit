@@ -107,7 +107,8 @@
 
   <ul class="nav-list">
     <li class="level1 nav-leaf"><a href="#overview">Overview</a></li>
-    <li class="level1 nav-node"><a href="#quick-start-example">Quick Start Example</a></li>
+    <li class="level1 nav-leaf"><a href="#quick-start">Quick Start</a></li>
+    <li class="level1 nav-node"><a href="#example">Example</a></li>
     <li class="level2 nav-leaf"><a href="#native-image">Native Image</a></li>
   </ul>
 
@@ -134,7 +135,7 @@
         </ul>
         <p>and it&#39;s published for Scala 2.12, 2.13 and 3.2.2.</p>
         <p>To use it with <a href="https://scala-cli.virtuslab.org">Scala CLI</a> use this directive:</p>
-        <pre class="keep-together pdf epub"><code class="nohighlight"><span class="comment">//&gt; using lib &quot;org.typelevel::toolkit::0.1.4&quot;</span></code></pre>
+        <pre class="keep-together pdf epub"><code class="nohighlight"><span class="comment">//&gt; using toolkit typelevel:latest</span></code></pre>
         <p>Albeit being created to be used with <a href="https://scala-cli.virtuslab.org">Scala CLI</a>, typelevel-toolkit can be imported into your <code>build.sbt</code> using:</p>
         <pre class="keep-together pdf epub"><code class="nohighlight"><span class="identifier">libraryDependencies</span><span> ++= </span><span class="type-name">Seq</span><span>(
   </span><span class="string-literal">&quot;org.typelevel&quot;</span><span> %% </span><span class="string-literal">&quot;toolkit&quot;</span><span> % </span><span class="string-literal">&quot;0.1.4&quot;</span><span>,
@@ -147,14 +148,18 @@
   </span><span class="string-literal">&quot;org.typelevel&quot;</span><span> %%% </span><span class="string-literal">&quot;toolkit-test&quot;</span><span> % </span><span class="string-literal">&quot;0.1.4&quot;</span><span> % </span><span class="type-name">Test</span><span>
 )</span></code></pre>
         
-        <h2 id="quick-start-example" class="section"><a class="anchor-link left" href="#quick-start-example"><i class="icofont-laika link">&#xef71;</i></a>Quick Start Example</h2>
+        <h2 id="quick-start" class="section"><a class="anchor-link left" href="#quick-start"><i class="icofont-laika link">&#xef71;</i></a>Quick Start</h2>
+        <p>Getting started with the toolkit is as simple as running a single command:</p>
+        <pre class="keep-together pdf epub"><code class="nohighlight"><span>scala-cli --power new typelevel/toolkit.g</span><span class="number-literal">8</span></code></pre>
+        
+        <h2 id="example" class="section"><a class="anchor-link left" href="#example"><i class="icofont-laika link">&#xef71;</i></a>Example</h2>
         <div class="tab-container" data-tab-group="scala-version">
           <ul class="tab-group">
             <li class="tab active" data-choice-name="scala-3"><a href="#">Scala 3</a></li>
             <li class="tab" data-choice-name="scala-2"><a href="#">Scala 2</a></li>
           </ul>
           <div class="tab-content active" data-choice-name="scala-3">
-            <pre class="keep-together pdf epub"><code class="nohighlight"><span class="comment">//&gt; using lib &quot;org.typelevel::toolkit::0.1.4&quot;
+            <pre class="keep-together pdf epub"><code class="nohighlight"><span class="comment">//&gt; using toolkit typelevel:latest
 </span><span>
 </span><span class="keyword">import</span><span> </span><span class="identifier">cats</span><span>.</span><span class="identifier">effect</span><span>.*
 
@@ -162,7 +167,7 @@
   </span><span class="keyword">def</span><span> </span><span class="declaration-name">run</span><span> = </span><span class="type-name">IO</span><span>.</span><span class="identifier">println</span><span>(</span><span class="string-literal">&quot;Hello toolkit!&quot;</span><span>)</span></code></pre>
           </div>
           <div class="tab-content" data-choice-name="scala-2">
-            <pre class="keep-together pdf epub"><code class="nohighlight"><span class="comment">//&gt; using lib &quot;org.typelevel::toolkit::0.1.4&quot;
+            <pre class="keep-together pdf epub"><code class="nohighlight"><span class="comment">//&gt; using toolkit typelevel:latest
 </span><span>
 </span><span class="keyword">import</span><span> </span><span class="identifier">cats</span><span>.</span><span class="identifier">effect</span><span>.</span><span class="identifier">_</span><span>
 
