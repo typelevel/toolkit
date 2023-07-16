@@ -20,7 +20,7 @@ and it's published for Scala 2.12, 2.13 and 3.2.2.
 
 To use it with [Scala CLI] use this directive:
 ```scala
-//> using lib "org.typelevel::toolkit::@VERSION@"
+//> using toolkit typelevel:latest
 ```
 
 Albeit being created to be used with [Scala CLI], typelevel-toolkit can be imported into your `build.sbt` using:
@@ -37,11 +37,20 @@ libraryDependencies ++= Seq(
 )
 ```
 
-## Quick Start Example
+## Quick Start
+
+Getting started with the toolkit is as simple as running a single command:
+
+```sh
+scala-cli --power new typelevel/toolkit.g8
+```
+
+## Example
+
 @:select(scala-version)
 @:choice(scala-3)
 ```scala mdoc:reset:silent
-//> using lib "org.typelevel::toolkit::@VERSION@"
+//> using toolkit typelevel:latest
 
 import cats.effect.*
 
@@ -50,7 +59,7 @@ object Hello extends IOApp.Simple:
 ```
 @:choice(scala-2)
 ```scala mdoc:reset:silent
-//> using lib "org.typelevel::toolkit::@VERSION@"
+//> using toolkit typelevel:latest
 
 import cats.effect._
 
