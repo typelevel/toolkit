@@ -3,7 +3,7 @@
 A toolkit of great libraries to get started building Typelevel apps on JVM, Node.js, and Native! Our very own flavour of the [Scala Toolkit].
 
 ```scala
-//> using lib "org.typelevel::toolkit::latest.release"
+//> using toolkit typelevel:latest
 
 import cats.effect.*
 
@@ -11,7 +11,13 @@ object Hello extends IOApp.Simple:
   def run = IO.println("Hello toolkit!")
 ```
 
-It currently includes:
+To get started, you can use the accompanying [template](https://github.com/typelevel/toolkit.g8) :
+
+``` sh
+scala-cli --power new typelevel/toolkit.g8
+```
+
+# Libraries included
 
 * [Cats] and [Cats Effect]
 * [FS2] and [FS2 I/O]
