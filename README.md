@@ -3,7 +3,7 @@
 A toolkit of great libraries to get started building Typelevel apps on JVM, Node.js, and Native! Our very own flavour of the [Scala Toolkit].
 
 ```scala
-//> using lib "org.typelevel::toolkit::latest.release"
+//> using toolkit typelevel:latest
 
 import cats.effect.*
 
