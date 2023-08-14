@@ -1,4 +1,4 @@
-val sbtTlVersion = "0.5.0-RC11"
+val sbtTlVersion = "0.5.0-RC12"
 addSbtPlugin("org.typelevel" % "sbt-typelevel" % sbtTlVersion)
 addSbtPlugin("org.typelevel" % "sbt-typelevel-mergify" % sbtTlVersion)
 addSbtPlugin("org.typelevel" % "sbt-typelevel-site" % sbtTlVersion)
