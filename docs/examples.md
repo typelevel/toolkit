@@ -420,6 +420,27 @@ object PerftConverter extends IOApp.Simple {
 ```
 @:@
 
+## A helper utility to write out an `Seq[CaseClass]` to CSV
+
+In the presence of a CsvRowEncoder
+
+```
+import fs2.*
+import fs2.data.csv.*
+import fs2.io.file.Path
+
+given val pEncoder: CsvRowEncoder[CaseClass, String] = deriveCsvRowEncoder
+
+def writeCaseClassIterableToFile[A](data: Seq[A], file : Path)(using CsvRowEncoder[A, String]) =
+    fs2.Stream.emits[IO, A](data)
+      .through(encodeUsingFirstHeaders(fullRows = true))
+      .through(text.utf8Encode)
+      .through( Files[IO].writeAll(file) )
+      .compile
+      .drain      
+```
+
+
 [fs2]: https://fs2.io/#/
 [fs2-data-csv]: https://fs2-data.gnieh.org/documentation/csv/
 [decline]: https://ben.kirw.in/decline/
