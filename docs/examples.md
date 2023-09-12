@@ -439,9 +439,7 @@ case class YourCaseClass(n: String, i: Int)
 
 given CsvRowEncoder[YourCaseClass, String] = deriveCsvRowEncoder
 
-def writeCaseClassToCsv[A]
-  (path: Path)
-  (using CsvRowEncoder[A, String]): Pipe[IO, A, Nothing] =
+def writeCaseClassToCsv[A](path: Path)(using CsvRowEncoder[A, String]): Pipe[IO, A, Nothing] =
     _.through(encodeUsingFirstHeaders(fullRows = true))
       .through(fs2.text.utf8.encode)
       .through(Files[IO].writeAll(path))
