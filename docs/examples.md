@@ -166,7 +166,7 @@ object Main extends CommandIOApp("mkString", "Concatenates strings from stdin") 
 
 ## Parsing and transforming a CSV file
 
-Here, [fs2-data-csv] is used to read and parse a comma separated file. 
+Here, [fs2-data-csv] is used to read and parse a comma separated file.
 Manual encoders and decoders are defined for our `Passenger`s to show you how to do everything from scratch.
 
 Let's start with a CSV file that has records of fictious passengers registered for a flight:
@@ -233,7 +233,7 @@ val input = Files[IO]
 
 object CSVPrinter extends IOApp.Simple:
 
-  /** First we'll do some logging for each row, 
+  /** First we'll do some logging for each row,
     * and then calculate and print the mean age */
   val run =
     input
@@ -310,7 +310,7 @@ object CSVPrinter extends IOApp.Simple {
     .through(decodeUsingHeaders[Passenger]())
 
 
-  /** First we'll do some logging for each row, 
+  /** First we'll do some logging for each row,
     * and then calculate and print the mean age */
   val run =
     input
@@ -420,25 +420,65 @@ object PerftConverter extends IOApp.Simple {
 ```
 @:@
 
-## A helper utility to write out an `Seq[CaseClass]` to CSV
+## Writing data to a CSV file
 
-In the presence of a CsvRowEncoder
+If you want to save a list of a case class into a CSV file the below helper method may aid you:
 
-```
-import fs2.*
+@:select(scala-version)
+
+@:choice(scala-3)
+```scala mdoc:reset:silent
+import fs2.io.file.Files
 import fs2.data.csv.*
+import fs2.data.csv.generic.semiauto.*
 import fs2.io.file.Path
+import cats.effect.IO
+import fs2.Pipe
 
-given val pEncoder: CsvRowEncoder[CaseClass, String] = deriveCsvRowEncoder
+case class YourCaseClass(n: String, i: Int)
 
-def writeCaseClassIterableToFile[A](data: Seq[A], file : Path)(using CsvRowEncoder[A, String]) =
-    fs2.Stream.emits[IO, A](data)
-      .through(encodeUsingFirstHeaders(fullRows = true))
-      .through(text.utf8Encode)
-      .through( Files[IO].writeAll(file) )
-      .compile
-      .drain      
+given CsvRowEncoder[YourCaseClass, String] = deriveCsvRowEncoder
+
+def writeCaseClassToCsv[A]
+  (path: Path)
+  (using CsvRowEncoder[A, String]): Pipe[IO, A, Nothing] =
+    _.through(encodeUsingFirstHeaders(fullRows = true))
+      .through(fs2.text.utf8.encode)
+      .through(Files[IO].writeAll(path))
+      .drain
+
+// Useage
+fs2.Stream.emits(Seq(YourCaseClass("s", 1))).through(writeCaseClassToCsv(Path("temp.csv")))
+
 ```
+
+@:choice(scala-2)
+
+```scala mdoc:reset:silent
+import fs2.io.file.Files
+import fs2.data.csv._
+import fs2.data.csv.generic.semiauto._
+import fs2.io.file.Path
+import cats.effect.IO
+import fs2.Pipe
+
+case class YourCaseClass(n: String, i: Int)
+
+implicit val csvRowEncoder: CsvRowEncoder[YourCaseClass, String] = deriveCsvRowEncoder
+
+def writeCaseClassToCsv[A](path: Path)(using CsvRowEncoder[A, String]): Pipe[IO, A, Nothing] =
+    _.through(encodeUsingFirstHeaders(fullRows = true))
+      .through(fs2.text.utf8.encode)
+      .through(Files[IO].writeAll(path))
+      .drain
+
+// Useage
+fs2.Stream.emits(Seq(YourCaseClass("s", 1))).through(writeCaseClassToCsv(Path("temp.csv")))
+
+```
+
+@:@
+
 
 
 [fs2]: https://fs2.io/#/
