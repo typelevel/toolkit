@@ -422,7 +422,7 @@ object PerftConverter extends IOApp.Simple {
 
 ## Writing data to a CSV file
 
-If you want to save a list of a case class into a CSV file the below helper method may aid you:
+If you want to save a list of a case class into a CSV file this helper method may aid you:
 
 @:select(scala-version)
 
