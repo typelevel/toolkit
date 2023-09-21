@@ -470,7 +470,7 @@ def writeCaseClassToCsv[A](path: Path)(using CsvRowEncoder[A, String]): Pipe[IO,
       .through(Files[IO].writeAll(path))
       .drain
 
-// Useage
+// Usage
 fs2.Stream.emits(Seq(YourCaseClass("s", 1))).through(writeCaseClassToCsv(Path("temp.csv")))
 
 ```
