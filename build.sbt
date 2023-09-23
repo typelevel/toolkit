@@ -11,7 +11,11 @@ ThisBuild / mergifyStewardConfig ~= {
 
 ThisBuild / crossScalaVersions := Seq("2.13.12", "3.3.1")
 
-lazy val root = tlCrossRootProject.aggregate(toolkit, toolkitTest)
+lazy val root = tlCrossRootProject
+  .aggregate(toolkit, toolkitTest)
+  .settings(
+    (Test / test) := (Test / test).dependsOn(toolkitTesting / Test / test).value
+  )
 
 lazy val toolkit = crossProject(JVMPlatform, JSPlatform, NativePlatform)
   .in(file("toolkit"))
@@ -43,6 +47,36 @@ lazy val toolkitTest = crossProject(JVMPlatform, JSPlatform, NativePlatform)
     ),
     mimaPreviousArtifacts := Set()
   )
+
+lazy val toolkitTesting = project
+  .in(file("toolkit-testing"))
+  .settings(
+    name := "toolkit-testing",
+    Test / test := (Test / test).dependsOn(toolkit.jvm / publishLocal).value,
+    scalacOptions ++= {
+      if (scalaBinaryVersion.value == "2.13") Seq("-Ytasty-reader") else Nil
+    },
+    libraryDependencies ++= Seq(
+      "org.typelevel" %% "munit-cats-effect" % "2.0.0-M3" % Test,
+      "co.fs2" %% "fs2-io" % "3.9.2" % Test,
+      // https://github.com/VirtusLab/scala-cli/issues/2421
+      "org.virtuslab.scala-cli" %% "cli" % "1.0.4" % Test cross (CrossVersion.for2_13Use3) excludeAll (
+        ExclusionRule("com.lihaoyi:geny_2.13"),
+        ExclusionRule(
+          "org.scala-lang.modules",
+          "scala-collection-compat_2.13"
+        ),
+        ExclusionRule(
+          "com.github.plokhotnyuk.jsoniter-scala",
+          "jsoniter-scala-core_2.13"
+        ),
+        ExclusionRule("com.lihaoyi", "sourcecode_2.13"),
+        ExclusionRule("ai.kien", "python-native-libs_2.13"),
+        ExclusionRule("com.lihaoyi", "os-lib_2.13")
+      )
+    )
+  )
+  .enablePlugins(BuildInfoPlugin, NoPublishPlugin)
 
 lazy val docs = project
   .in(file("site"))
