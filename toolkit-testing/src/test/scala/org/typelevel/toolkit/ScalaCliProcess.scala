@@ -36,7 +36,7 @@ object ScalaCliProcess {
     } else path
   }
 
-  private def scalaCli[F[_]: Processes: ApplicativeThrow: Concurrent: Console](
+  private def scalaCli[F[_]: Processes: Concurrent: Console](
       args: List[String]
   ): F[Unit] = ProcessBuilder(
     s"$JavaHome/bin/java",
@@ -72,15 +72,15 @@ object ScalaCliProcess {
       } yield ()
     )
 
-  def command[F[_]: Processes: ApplicativeThrow: Concurrent: Console](
+  def command[F[_]: Processes: Concurrent: Console](
       args: List[String]
   ): F[Unit] = scalaCli[F](args)
 
-  def compile[F[_]: Processes: ApplicativeThrow: Concurrent: Console](
+  def compile[F[_]: Processes: Concurrent: Console](
       fileName: String
   ): F[Unit] = scalaCli[F]("compile" :: fileName :: Nil)
 
-  def run[F[_]: Processes: ApplicativeThrow: Concurrent: Console](
+  def run[F[_]: Processes: Concurrent: Console](
       fileName: String
   ): F[Unit] = scalaCli[F]("run" :: fileName :: Nil)
 

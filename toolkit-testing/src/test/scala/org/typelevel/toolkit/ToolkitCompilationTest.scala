@@ -84,7 +84,7 @@ class ToolkitCompilationTest extends CatsEffectSuite {
           Stream(header, scriptBody.stripMargin)
             .through(Files[IO].writeUtf8(path))
             .compile
-            .drain >> ScalaCliProcess.compile(path.toString)
+            .drain >> ScalaCliProcess.compile[IO](path.toString)
         }
     )
   }
