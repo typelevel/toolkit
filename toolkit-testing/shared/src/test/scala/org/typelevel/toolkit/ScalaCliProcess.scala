@@ -48,23 +48,22 @@ object ScalaCliProcess {
 
   private def printStreams[F[_]: Concurrent: Console](
       process: Process[F]
-  ): F[Unit] =
-    Supervisor[F](await = true).use(supervisor =>
-      for {
-        _ <- process.stdout
-          .through(fs2.text.utf8.decode)
-          .foreach(Console[F].println)
-          .compile
-          .drain
-          .supervise(supervisor)
-        _ <- process.stderr
-          .through(fs2.text.utf8.decode)
-          .foreach(Console[F].errorln)
-          .compile
-          .drain
-          .supervise(supervisor)
-      } yield ()
-    )
+  ): F[Unit] = Supervisor[F](await = true).use(supervisor =>
+    for {
+      _ <- process.stdout
+        .through(fs2.text.utf8.decode)
+        .foreach(Console[F].println)
+        .compile
+        .drain
+        .supervise(supervisor)
+      _ <- process.stderr
+        .through(fs2.text.utf8.decode)
+        .foreach(Console[F].errorln)
+        .compile
+        .drain
+        .supervise(supervisor)
+    } yield ()
+  )
 
   def command[F[_]: Processes: Concurrent: Console](
       args: List[String]

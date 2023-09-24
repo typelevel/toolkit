@@ -92,7 +92,8 @@ lazy val toolkitTesting = crossProject(JVMPlatform, JSPlatform, NativePlatform)
   )
   .jsSettings(
     Test / test := (Test / test).dependsOn(toolkit.js / publishLocal).value,
-    buildInfoKeys += "platform" -> "js"
+    buildInfoKeys += "platform" -> "js",
+    scalaJSLinkerConfig ~= { _.withModuleKind(ModuleKind.CommonJSModule) }
   )
   .nativeSettings(
     Test / test := (Test / test).dependsOn(toolkit.native / publishLocal).value,
