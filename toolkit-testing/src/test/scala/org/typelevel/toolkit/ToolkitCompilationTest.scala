@@ -20,7 +20,6 @@ import munit.{CatsEffectSuite, TestOptions}
 import cats.effect.IO
 import fs2.Stream
 import fs2.io.file.Files
-import scala.cli.ScalaCli
 import buildinfo.BuildInfo.{version, scalaVersion}
 
 class ToolkitCompilationTest extends CatsEffectSuite {
@@ -85,9 +84,7 @@ class ToolkitCompilationTest extends CatsEffectSuite {
           Stream(header, scriptBody.stripMargin)
             .through(Files[IO].writeUtf8(path))
             .compile
-            .drain >> IO.delay(
-            ScalaCli.main(Array("compile", path.toString))
-          )
+            .drain >> ScalaCliProcess.compile(path.toString)
         }
     )
   }

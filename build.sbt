@@ -1,5 +1,6 @@
 import laika.helium.config._
 import laika.rewrite.nav.{ChoiceConfig, Selections, SelectionConfig}
+import java.io.File
 
 ThisBuild / tlBaseVersion := "0.1"
 ThisBuild / startYear := Some(2023)
@@ -71,7 +72,11 @@ lazy val toolkitTesting = project
         ExclusionRule("ai.kien", "python-native-libs_2.13"),
         ExclusionRule("com.lihaoyi", "os-lib_2.13")
       )
-    )
+    ),
+    Test / fork := true,
+    Test / javaOptions += s"-Dtoolkit.testing.classpath=${(Test / fullClasspath).value
+        .map(_.data.getAbsolutePath)
+        .mkString(File.pathSeparator)}"
   )
   .enablePlugins(BuildInfoPlugin, NoPublishPlugin)
 
