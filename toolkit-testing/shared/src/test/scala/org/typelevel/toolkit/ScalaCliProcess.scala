@@ -24,6 +24,8 @@ import cats.effect.syntax.all._
 import cats.effect.std.Supervisor
 import cats.ApplicativeThrow
 import buildinfo.BuildInfo
+import fs2.Stream
+import fs2.io.file.Files
 
 object ScalaCliProcess {
 
@@ -65,16 +67,40 @@ object ScalaCliProcess {
     } yield ()
   )
 
+  private def writeToFile[F[_]: Files: Concurrent](
+      scriptBody: String
+  ): F[String] =
+    Files[F]
+      .tempFile(None, "", ".scala", None)
+      .use { path =>
+        val header = List(
+          s"//> using scala ${BuildInfo.scalaVersion}",
+          s"//> using toolkit typelevel:${BuildInfo.version}",
+          s"//> using platform ${BuildInfo.platform}"
+        ).mkString("", "\n", "\n")
+        Stream(header, scriptBody.stripMargin)
+          .through(Files[F].writeUtf8(path))
+          .compile
+          .drain
+          .as(path.toString)
+      }
+
   def command[F[_]: Processes: Concurrent: Console](
       args: List[String]
   ): F[Unit] = scalaCli[F](args)
 
-  def compile[F[_]: Processes: Concurrent: Console](
-      fileName: String
-  ): F[Unit] = scalaCli[F]("compile" :: fileName :: Nil)
+  def compile[F[_]: Processes: Concurrent: Console: Files](
+      body: String
+  ): F[Unit] = for {
+    fileName <- writeToFile(body)
+    _ <- scalaCli[F]("compile" :: fileName :: Nil)
+  } yield ()
 
-  def run[F[_]: Processes: Concurrent: Console](
-      fileName: String
-  ): F[Unit] = scalaCli[F]("run" :: fileName :: Nil)
+  def run[F[_]: Processes: Concurrent: Console: Files](
+      body: String
+  ): F[Unit] = for {
+    fileName <- writeToFile(body)
+    _ <- scalaCli[F]("run" :: fileName :: Nil)
+  } yield ()
 
 }
