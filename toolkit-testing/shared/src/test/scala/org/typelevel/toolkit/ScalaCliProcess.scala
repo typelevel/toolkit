@@ -17,7 +17,7 @@
 package org.typelevel.toolkit
 
 import fs2.io.process.{Process, ProcessBuilder, Processes}
-import cats.effect.kernel.Concurrent
+import cats.effect.kernel.{Concurrent, Resource}
 import cats.effect.std.Console
 import cats.syntax.all._
 import cats.effect.syntax.all._
@@ -69,10 +69,10 @@ object ScalaCliProcess {
 
   private def writeToFile[F[_]: Files: Concurrent](
       scriptBody: String
-  ): F[String] =
+  ): Resource[F, String] =
     Files[F]
       .tempFile(None, "", ".scala", None)
-      .use { path =>
+      .flatMap { path =>
         val header = List(
           s"//> using scala ${BuildInfo.scalaVersion}",
           s"//> using toolkit typelevel:${BuildInfo.version}",
@@ -83,6 +83,7 @@ object ScalaCliProcess {
           .compile
           .drain
           .as(path.toString)
+          .toResource
       }
 
   def command[F[_]: Processes: Concurrent: Console](
@@ -91,16 +92,10 @@ object ScalaCliProcess {
 
   def compile[F[_]: Processes: Concurrent: Console: Files](
       body: String
-  ): F[Unit] = for {
-    fileName <- writeToFile(body)
-    _ <- scalaCli[F]("compile" :: fileName :: Nil)
-  } yield ()
+  ): F[Unit] = writeToFile(body).use(f => scalaCli[F]("compile" :: f :: Nil))
 
   def run[F[_]: Processes: Concurrent: Console: Files](
       body: String
-  ): F[Unit] = for {
-    fileName <- writeToFile(body)
-    _ <- scalaCli[F]("run" :: fileName :: Nil)
-  } yield ()
+  ): F[Unit] = writeToFile(body).use(f => scalaCli[F]("run" :: f :: Nil))
 
 }
