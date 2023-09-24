@@ -20,7 +20,7 @@ import munit.{CatsEffectSuite, TestOptions}
 import cats.effect.IO
 import fs2.Stream
 import fs2.io.file.Files
-import buildinfo.BuildInfo.{version, scalaVersion}
+import buildinfo.BuildInfo.{version, scalaVersion, platform}
 
 class ToolkitCompilationTest extends CatsEffectSuite {
 
@@ -79,8 +79,11 @@ class ToolkitCompilationTest extends CatsEffectSuite {
       Files[IO]
         .tempFile(None, "", ".scala", None)
         .use { path =>
-          val header =
-            s"//> using scala $scalaVersion\n//> using toolkit typelevel:$version\n"
+          val header = List(
+            s"//> using scala $scalaVersion",
+            s"//> using toolkit typelevel:$version",
+            s"//> using platform $platform"
+          ).mkString("", "\n", "\n")
           Stream(header, scriptBody.stripMargin)
             .through(Files[IO].writeUtf8(path))
             .compile

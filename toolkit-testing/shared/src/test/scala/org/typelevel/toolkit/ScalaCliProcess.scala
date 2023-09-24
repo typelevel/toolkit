@@ -23,18 +23,12 @@ import cats.syntax.all._
 import cats.effect.syntax.all._
 import cats.effect.std.Supervisor
 import cats.ApplicativeThrow
+import buildinfo.BuildInfo
 
 object ScalaCliProcess {
 
-  private val ClassPath: String =
-    System.getProperty("toolkit.testing.classpath")
-  private val JavaHome: String = {
-    val path = sys.env.get("JAVA_HOME").orElse(sys.props.get("java.home")).get
-    if (path.endsWith("/jre")) {
-      // handle JDK 8 installations
-      path.replace("/jre", "")
-    } else path
-  }
+  private val ClassPath: String = BuildInfo.classPath
+  private val JavaHome: String = BuildInfo.javaHome
 
   private def scalaCli[F[_]: Processes: Concurrent: Console](
       args: List[String]

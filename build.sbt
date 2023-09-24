@@ -46,19 +46,18 @@ lazy val toolkitTest = crossProject(JVMPlatform, JSPlatform, NativePlatform)
     mimaPreviousArtifacts := Set()
   )
 
-lazy val toolkitTesting = project
+lazy val toolkitTesting = crossProject(JVMPlatform, JSPlatform, NativePlatform)
   .in(file("toolkit-testing"))
   .settings(
     name := "toolkit-testing",
-    Test / test := (Test / test).dependsOn(toolkit.jvm / publishLocal).value,
     scalacOptions ++= {
       if (scalaBinaryVersion.value == "2.13") Seq("-Ytasty-reader") else Nil
     },
     libraryDependencies ++= Seq(
-      "org.typelevel" %% "munit-cats-effect" % "2.0.0-M3" % Test,
-      "co.fs2" %% "fs2-io" % "3.9.2" % Test,
+      "org.typelevel" %%% "munit-cats-effect" % "2.0.0-M3" % Test,
+      "co.fs2" %%% "fs2-io" % "3.9.2" % Test,
       // https://github.com/VirtusLab/scala-cli/issues/2421
-      "org.virtuslab.scala-cli" %% "cli" % "1.0.4" % Test cross (CrossVersion.for2_13Use3) excludeAll (
+      "org.virtuslab.scala-cli" %% "cli" % "1.0.4" cross (CrossVersion.for2_13Use3) excludeAll (
         ExclusionRule("com.lihaoyi:geny_2.13"),
         ExclusionRule(
           "org.scala-lang.modules",
@@ -73,10 +72,31 @@ lazy val toolkitTesting = project
         ExclusionRule("com.lihaoyi", "os-lib_2.13")
       )
     ),
-    Test / fork := true,
-    Test / javaOptions += s"-Dtoolkit.testing.classpath=${(Test / fullClasspath).value
-        .map(_.data.getAbsolutePath)
-        .mkString(File.pathSeparator)}"
+    buildInfoKeys += BuildInfoKey.map(Compile / dependencyClasspath) {
+      case (_, v) =>
+        "classPath" -> v.seq
+          .map(_.data.getAbsolutePath)
+          .mkString(File.pathSeparator)
+    },
+    buildInfoKeys += BuildInfoKey.action("javaHome") {
+      val path = sys.env.get("JAVA_HOME").orElse(sys.props.get("java.home")).get
+      if (path.endsWith("/jre")) {
+        // handle JDK 8 installations
+        path.replace("/jre", "")
+      } else path
+    }
+  )
+  .jvmSettings(
+    Test / test := (Test / test).dependsOn(toolkit.jvm / publishLocal).value,
+    buildInfoKeys += "platform" -> "jvm"
+  )
+  .jsSettings(
+    Test / test := (Test / test).dependsOn(toolkit.js / publishLocal).value,
+    buildInfoKeys += "platform" -> "js"
+  )
+  .nativeSettings(
+    Test / test := (Test / test).dependsOn(toolkit.native / publishLocal).value,
+    buildInfoKeys += "platform" -> "native"
   )
   .enablePlugins(BuildInfoPlugin, NoPublishPlugin)
 
