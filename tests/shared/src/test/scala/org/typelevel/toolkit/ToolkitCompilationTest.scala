@@ -66,7 +66,7 @@ class ToolkitCompilationTest extends CatsEffectSuite {
          |import munit.*
          |
          |class Test extends CatsEffectSuite:
-         |  test("test")(IO.raiseError(new Exception))"""
+         |  test("test")(IO.unit)"""
     else
       """|import cats.effect._
          |import munit._
