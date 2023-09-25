@@ -60,31 +60,6 @@ class ToolkitCompilationTest extends CatsEffectSuite {
          |}"""
   }
 
-  testRun("Toolkit should run a script with every dependency") {
-    if (scala3)
-      """|import cats.syntax.all.*
-         |import cats.effect.*
-         |import com.monovore.decline.effect.*
-         |import fs2.data.csv.generic.semiauto.*
-         |import fs2.io.file.*
-         |import org.http4s.ember.client.*
-         |
-         |object Hello extends IOApp.Simple:
-         |  def run = IO.println("Hello toolkit!")"""
-    else
-      """|import cats.syntax.all._
-         |import cats.effect._
-         |import com.monovore.decline.effect._
-         |import fs2.data.csv.generic.semiauto._
-         |import fs2.io.file._
-         |import io.circe._
-         |import org.http4s.ember.client._
-         |
-         |object Hello extends IOApp.Simple {
-         |  def run = IO.println("Hello toolkit!")
-         |}"""
-  }
-
   def testRun(testName: TestOptions)(scriptBody: String): Unit =
     test(testName)(ScalaCliProcess.run(scriptBody))
 

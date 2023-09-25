@@ -61,7 +61,7 @@ object ScalaCliProcess {
       scriptBody: String
   ): Resource[IO, String] =
     Files[IO]
-      .tempFile(None, "", ".scala", None)
+      .tempFile(None, "", "-toolkit.scala", None)
       .evalTap { path =>
         val header = List(
           s"//> using scala ${BuildInfo.scalaVersion}",
