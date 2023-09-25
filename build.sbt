@@ -84,7 +84,8 @@ lazy val tests = crossProject(JVMPlatform, JSPlatform, NativePlatform)
         // handle JDK 8 installations
         path.replace("/jre", "")
       } else path
-    }
+    },
+    buildInfoKeys += "scala3" -> (scalaVersion.value.head == '3')
   )
   .jvmSettings(
     Test / test := (Test / test).dependsOn(toolkit.jvm / publishLocal).value,
