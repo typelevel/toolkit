@@ -88,16 +88,25 @@ lazy val tests = crossProject(JVMPlatform, JSPlatform, NativePlatform)
     buildInfoKeys += "scala3" -> (scalaVersion.value.head == '3')
   )
   .jvmSettings(
-    Test / test := (Test / test).dependsOn(toolkit.jvm / publishLocal).value,
+    Test / test := (Test / test)
+      .dependsOn(toolkit.jvm / publishLocal, toolkitTest.jvm / publishLocal)
+      .value,
     buildInfoKeys += "platform" -> "jvm"
   )
   .jsSettings(
-    Test / test := (Test / test).dependsOn(toolkit.js / publishLocal).value,
+    Test / test := (Test / test)
+      .dependsOn(toolkit.js / publishLocal, toolkitTest.js / publishLocal)
+      .value,
     buildInfoKeys += "platform" -> "js",
     scalaJSLinkerConfig ~= { _.withModuleKind(ModuleKind.CommonJSModule) }
   )
   .nativeSettings(
-    Test / test := (Test / test).dependsOn(toolkit.native / publishLocal).value,
+    Test / test := (Test / test)
+      .dependsOn(
+        toolkit.native / publishLocal,
+        toolkitTest.native / publishLocal
+      )
+      .value,
     buildInfoKeys += "platform" -> "native"
   )
   .enablePlugins(BuildInfoPlugin, NoPublishPlugin)

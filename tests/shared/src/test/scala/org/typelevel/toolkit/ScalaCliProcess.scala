@@ -23,6 +23,7 @@ import buildinfo.BuildInfo
 import fs2.Stream
 import fs2.io.file.Files
 import fs2.io.process.{Process, ProcessBuilder}
+import munit.Assertions.fail
 
 object ScalaCliProcess {
 
@@ -37,8 +38,8 @@ object ScalaCliProcess {
       process.exitValue.flatMap {
         case 0 => IO.unit
         case x =>
-          printStreams(process) >> IO.raiseError(
-            new Exception(s"Non zero exit code ($x) for ${args.mkString(" ")}")
+          printStreams(process) >> IO.delay(
+            fail(s"Non zero exit code ($x) for ${args.mkString(" ")}")
           )
       }
     )
@@ -59,9 +60,14 @@ object ScalaCliProcess {
 
   private def writeToFile(
       scriptBody: String
-  ): Resource[IO, String] =
+  )(isTest: Boolean): Resource[IO, String] =
     Files[IO]
-      .tempFile(None, "", "-toolkit.scala", None)
+      .tempFile(
+        None,
+        "",
+        if (isTest) "-toolkit.test.scala" else "-toolkit.scala",
+        None
+      )
       .evalTap { path =>
         val header = List(
           s"//> using scala ${BuildInfo.scalaVersion}",
@@ -77,10 +83,10 @@ object ScalaCliProcess {
 
   def command(args: List[String]): IO[Unit] = scalaCli(args)
 
-  def compile(body: String): IO[Unit] =
-    writeToFile(body).use(f => scalaCli("compile" :: f :: Nil))
-
   def run(body: String): IO[Unit] =
-    writeToFile(body).use(f => scalaCli("run" :: f :: Nil))
+    writeToFile(body)(false).use(f => scalaCli("run" :: f :: Nil))
+
+  def test(body: String): IO[Unit] =
+    writeToFile(body)(true).use(f => scalaCli("test" :: f :: Nil))
 
 }

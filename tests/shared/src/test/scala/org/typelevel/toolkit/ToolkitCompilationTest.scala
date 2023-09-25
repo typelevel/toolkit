@@ -60,7 +60,26 @@ class ToolkitCompilationTest extends CatsEffectSuite {
          |}"""
   }
 
+  testTest("Toolkit should execute a simple munit suite") {
+    if (scala3)
+      """|import cats.effect.*
+         |import munit.*
+         |
+         |class Test extends CatsEffectSuite:
+         |  test("test")(IO.raiseError(new Exception))"""
+    else
+      """|import cats.effect._
+         |import munit._
+         |
+         |class Test extends CatsEffectSuite {
+         |  test("test")(IO.unit)
+         |}"""
+  }
+
   def testRun(testName: TestOptions)(scriptBody: String): Unit =
     test(testName)(ScalaCliProcess.run(scriptBody))
+
+  def testTest(testName: TestOptions)(scriptBody: String): Unit =
+    test(testName)(ScalaCliProcess.test(scriptBody))
 
 }
