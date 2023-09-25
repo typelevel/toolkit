@@ -22,7 +22,7 @@ import cats.effect.IO
 import buildinfo.BuildInfo
 import fs2.Stream
 import fs2.io.file.Files
-import fs2.io.process.{Process, ProcessBuilder, Processes}
+import fs2.io.process.{Process, ProcessBuilder}
 
 object ScalaCliProcess {
 
