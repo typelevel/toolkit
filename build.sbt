@@ -13,7 +13,7 @@ ThisBuild / mergifyStewardConfig ~= {
 ThisBuild / crossScalaVersions := Seq("2.13.12", "3.3.1")
 
 lazy val root = tlCrossRootProject
-  .aggregate(toolkit, toolkitTest, toolkitTesting)
+  .aggregate(toolkit, toolkitTest, tests)
 
 lazy val toolkit = crossProject(JVMPlatform, JSPlatform, NativePlatform)
   .in(file("toolkit"))
@@ -46,10 +46,10 @@ lazy val toolkitTest = crossProject(JVMPlatform, JSPlatform, NativePlatform)
     mimaPreviousArtifacts := Set()
   )
 
-lazy val toolkitTesting = crossProject(JVMPlatform, JSPlatform, NativePlatform)
-  .in(file("toolkit-testing"))
+lazy val tests = crossProject(JVMPlatform, JSPlatform, NativePlatform)
+  .in(file("tests"))
   .settings(
-    name := "toolkit-testing",
+    name := "tests",
     scalacOptions ++= {
       if (scalaBinaryVersion.value == "2.13") Seq("-Ytasty-reader") else Nil
     },

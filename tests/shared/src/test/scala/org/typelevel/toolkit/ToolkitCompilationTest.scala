@@ -17,7 +17,6 @@
 package org.typelevel.toolkit
 
 import munit.{CatsEffectSuite, TestOptions}
-import cats.effect.IO
 import buildinfo.BuildInfo.scalaVersion
 
 class ToolkitCompilationTest extends CatsEffectSuite {
@@ -117,13 +116,13 @@ class ToolkitCompilationTest extends CatsEffectSuite {
   )(testName: TestOptions)(scriptBody: String): Unit = test {
     val t = testName.withName(s"${testName.name} - $expectedLangVersion")
     if (scalaVersion == expectedLangVersion) t else t.ignore
-  }(ScalaCliProcess.compile[IO](scriptBody))
+  }(ScalaCliProcess.compile(scriptBody))
 
   def testRun(
       expectedLangVersion: String
   )(testName: TestOptions)(scriptBody: String): Unit = test {
     val t = testName.withName(s"${testName.name} - $expectedLangVersion")
     if (scalaVersion == expectedLangVersion) t else t.ignore
-  }(ScalaCliProcess.run[IO](scriptBody))
+  }(ScalaCliProcess.run(scriptBody))
 
 }
