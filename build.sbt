@@ -1,5 +1,6 @@
 import laika.helium.config._
 import laika.rewrite.nav.{ChoiceConfig, Selections, SelectionConfig}
+import java.io.File
 
 ThisBuild / tlBaseVersion := "0.1"
 ThisBuild / startYear := Some(2023)
@@ -11,7 +12,8 @@ ThisBuild / mergifyStewardConfig ~= {
 
 ThisBuild / crossScalaVersions := Seq("2.13.12", "3.3.1")
 
-lazy val root = tlCrossRootProject.aggregate(toolkit, toolkitTest)
+lazy val root = tlCrossRootProject
+  .aggregate(toolkit, toolkitTest, tests)
 
 lazy val toolkit = crossProject(JVMPlatform, JSPlatform, NativePlatform)
   .in(file("toolkit"))
@@ -43,6 +45,71 @@ lazy val toolkitTest = crossProject(JVMPlatform, JSPlatform, NativePlatform)
     ),
     mimaPreviousArtifacts := Set()
   )
+
+lazy val tests = crossProject(JVMPlatform, JSPlatform, NativePlatform)
+  .in(file("tests"))
+  .settings(
+    name := "tests",
+    scalacOptions ++= {
+      if (scalaBinaryVersion.value == "2.13") Seq("-Ytasty-reader") else Nil
+    },
+    libraryDependencies ++= Seq(
+      "org.typelevel" %%% "munit-cats-effect" % "2.0.0-M3" % Test,
+      "co.fs2" %%% "fs2-io" % "3.9.2" % Test,
+      // https://github.com/VirtusLab/scala-cli/issues/2421
+      "org.virtuslab.scala-cli" %% "cli" % "1.0.4" cross (CrossVersion.for2_13Use3) excludeAll (
+        ExclusionRule("com.lihaoyi:geny_2.13"),
+        ExclusionRule(
+          "org.scala-lang.modules",
+          "scala-collection-compat_2.13"
+        ),
+        ExclusionRule(
+          "com.github.plokhotnyuk.jsoniter-scala",
+          "jsoniter-scala-core_2.13"
+        ),
+        ExclusionRule("com.lihaoyi", "sourcecode_2.13"),
+        ExclusionRule("ai.kien", "python-native-libs_2.13"),
+        ExclusionRule("com.lihaoyi", "os-lib_2.13")
+      )
+    ),
+    buildInfoKeys += BuildInfoKey.map(Compile / dependencyClasspath) {
+      case (_, v) =>
+        "classPath" -> v.seq
+          .map(_.data.getAbsolutePath)
+          .mkString(File.pathSeparator)
+    },
+    buildInfoKeys += BuildInfoKey.action("javaHome") {
+      val path = sys.env.get("JAVA_HOME").orElse(sys.props.get("java.home")).get
+      if (path.endsWith("/jre")) {
+        // handle JDK 8 installations
+        path.replace("/jre", "")
+      } else path
+    },
+    buildInfoKeys += "scala3" -> (scalaVersion.value.head == '3')
+  )
+  .jvmSettings(
+    Test / test := (Test / test)
+      .dependsOn(toolkit.jvm / publishLocal, toolkitTest.jvm / publishLocal)
+      .value,
+    buildInfoKeys += "platform" -> "jvm"
+  )
+  .jsSettings(
+    Test / test := (Test / test)
+      .dependsOn(toolkit.js / publishLocal, toolkitTest.js / publishLocal)
+      .value,
+    buildInfoKeys += "platform" -> "js",
+    scalaJSLinkerConfig ~= { _.withModuleKind(ModuleKind.CommonJSModule) }
+  )
+  .nativeSettings(
+    Test / test := (Test / test)
+      .dependsOn(
+        toolkit.native / publishLocal,
+        toolkitTest.native / publishLocal
+      )
+      .value,
+    buildInfoKeys += "platform" -> "native"
+  )
+  .enablePlugins(BuildInfoPlugin, NoPublishPlugin)
 
 lazy val docs = project
   .in(file("site"))

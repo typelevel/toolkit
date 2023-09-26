@@ -26,6 +26,14 @@ pull_request_rules:
       add:
       - site
       remove: []
+- name: Label tests PRs
+  conditions:
+  - files~=^tests/
+  actions:
+    label:
+      add:
+      - tests
+      remove: []
 - name: Label toolkit PRs
   conditions:
   - files~=^toolkit/
