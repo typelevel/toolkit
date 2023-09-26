@@ -19,10 +19,11 @@ package org.typelevel.toolkit
 import cats.effect.kernel.Resource
 import cats.effect.std.Console
 import cats.effect.IO
+import cats.syntax.parallel._
 import buildinfo.BuildInfo
 import fs2.Stream
 import fs2.io.file.Files
-import fs2.io.process.{Process, ProcessBuilder}
+import fs2.io.process.ProcessBuilder
 import munit.Assertions.fail
 
 object ScalaCliProcess {
@@ -35,28 +36,18 @@ object ScalaCliProcess {
     args.prependedAll(List("-cp", ClassPath, "scala.cli.ScalaCli"))
   ).spawn[IO]
     .use(process =>
-      process.exitValue.flatMap {
-        case 0 => IO.unit
-        case x =>
-          printStreams(process) >> IO.delay(
-            fail(s"Non zero exit code ($x) for ${args.mkString(" ")}")
+      (
+        process.exitValue,
+        process.stdout.through(fs2.text.utf8.decode).compile.string,
+        process.stderr.through(fs2.text.utf8.decode).compile.string
+      ).parFlatMapN {
+        case (0, _, _) => IO.unit
+        case (exitCode, stdout, stdErr) =>
+          IO.println(stdout) >> Console[IO].errorln(stdErr) >> IO.delay(
+            fail(s"Non zero exit code ($exitCode) for ${args.mkString(" ")}")
           )
       }
     )
-
-  private def printStreams(process: Process[IO]): IO[Unit] = {
-    val stdout: IO[Unit] = process.stdout
-      .through(fs2.text.utf8.decode)
-      .foreach(Console[IO].print)
-      .compile
-      .drain
-    val stderr: IO[Unit] = process.stderr
-      .through(fs2.text.utf8.decode)
-      .foreach(Console[IO].error)
-      .compile
-      .drain
-    stdout.both(stderr).void
-  }
 
   private def writeToFile(
       scriptBody: String
