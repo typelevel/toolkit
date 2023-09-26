@@ -18,8 +18,12 @@ package org.typelevel.toolkit
 
 import munit.{CatsEffectSuite, TestOptions}
 import buildinfo.BuildInfo.scala3
+import scala.concurrent.duration._
 
 class ToolkitCompilationTest extends CatsEffectSuite {
+
+  // Sometimes it will take more than 30 seconds for native code to get compiled and executed
+  override def munitIOTimeout: Duration = 1.minute
 
   testRun("Toolkit should run a simple Hello Cats Effect") {
     if (scala3)
