@@ -22,8 +22,11 @@ import scala.concurrent.duration._
 
 class ToolkitCompilationTest extends CatsEffectSuite {
 
-  // Sometimes it will take more than 30 seconds for native code to get compiled and executed
-  override def munitIOTimeout: Duration = 1.minute
+  // 2 minutes may seem a lot, but consider that the first test for
+  // each (scalaVersion, platform) will have to download the compiler
+  // (if it's not the default), compile (that for native takes awhile)
+  // and then finally run the code.
+  override def munitIOTimeout: Duration = 2.minute
 
   testRun("Toolkit should run a simple Hello Cats Effect") {
     if (scala3)
