@@ -111,7 +111,8 @@
     <li class="level1 nav-leaf"><a href="#overview">Overview</a></li>
     <li class="level1 nav-leaf"><a href="#quick-start">Quick Start</a></li>
     <li class="level1 nav-node"><a href="#example">Example</a></li>
-    <li class="level2 nav-leaf"><a href="#native-image">Native Image</a></li>
+    <li class="level2 nav-leaf"><a href="#scala-native-usage">Scala Native usage</a></li>
+    <li class="level1 nav-leaf"><a href="#native-image">Native Image</a></li>
   </ul>
 
   <p class="footer"></p>
@@ -179,8 +180,38 @@
           </div>
         </div>
         
-        <h3 id="native-image" class="section"><a class="anchor-link left" href="#native-image"><i class="icofont-laika link">&#xef71;</i></a>Native Image</h3>
-        <p>When building GraalVM Native Image the --no-fallback option is required, otherwise native-image will try searching
+        <h3 id="scala-native-usage" class="section"><a class="anchor-link left" href="#scala-native-usage"><i class="icofont-laika link">&#xef71;</i></a>Scala Native usage</h3>
+        <p>Since the native flavour of most of the <strong>Typelevel libraries</strong> is, at the moment, built against Scala Native 0.4.15, when using <a href="https://scala-cli.virtuslab.org">Scala CLI</a> you have to declare the Scala native&#39;s version, i.e.</p>
+        <div class="tab-container" data-tab-group="scala-version">
+          <ul class="tab-group">
+            <li class="tab active" data-choice-name="scala-3"><a href="#">Scala 3</a></li>
+            <li class="tab" data-choice-name="scala-2"><a href="#">Scala 2</a></li>
+          </ul>
+          <div class="tab-content active" data-choice-name="scala-3">
+            <pre class="keep-together pdf epub"><code class="nohighlight"><span class="comment">//&gt; using toolkit typelevel:latest
+//&gt; using platform native
+//&gt; using nativeVersion 0.4.15
+</span><span>
+</span><span class="keyword">import</span><span> </span><span class="identifier">cats</span><span>.</span><span class="identifier">effect</span><span>.*
+
+</span><span class="keyword">object</span><span> </span><span class="type-name">Hello</span><span> </span><span class="keyword">extends</span><span> </span><span class="type-name">IOApp</span><span>.</span><span class="type-name">Simple</span><span>:
+  </span><span class="keyword">def</span><span> </span><span class="declaration-name">run</span><span> = </span><span class="type-name">IO</span><span>.</span><span class="identifier">println</span><span>(</span><span class="string-literal">&quot;Hello toolkit!&quot;</span><span>)</span></code></pre>
+          </div>
+          <div class="tab-content" data-choice-name="scala-2">
+            <pre class="keep-together pdf epub"><code class="nohighlight"><span class="comment">//&gt; using toolkit typelevel:latest
+//&gt; using platform native
+//&gt; using nativeVersion 0.4.15
+</span><span>
+</span><span class="keyword">import</span><span> </span><span class="identifier">cats</span><span>.</span><span class="identifier">effect</span><span>.</span><span class="identifier">_</span><span>
+
+</span><span class="keyword">object</span><span> </span><span class="type-name">Hello</span><span> </span><span class="keyword">extends</span><span> </span><span class="type-name">IOApp</span><span>.</span><span class="type-name">Simple</span><span> {
+  </span><span class="keyword">def</span><span> </span><span class="declaration-name">run</span><span> = </span><span class="type-name">IO</span><span>.</span><span class="identifier">println</span><span>(</span><span class="string-literal">&quot;Hello toolkit!&quot;</span><span>)
+}</span></code></pre>
+          </div>
+        </div>
+        
+        <h2 id="native-image" class="section"><a class="anchor-link left" href="#native-image"><i class="icofont-laika link">&#xef71;</i></a>Native Image</h2>
+        <p>When building GraalVM Native Image the <code>--no-fallback</code> option is required, otherwise native-image will try searching
         a static reflection configuration for <a href="https://github.com/scala/scala/blob/v2.13.8/src/library/scala/Enumeration.scala#L190-L215=">this Enumeration method</a>. Thus using this flag is safe only if you&#39;re not using
         Enumerations in your codebase, see <a href="https://github.com/typelevel/cats-effect/issues/3051#issuecomment-1167026949">this comment</a> for more info.</p>
 
