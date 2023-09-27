@@ -69,7 +69,7 @@ object Hello extends IOApp.Simple {
 ```
 @:@
 
-### Warning
+### Scala Native usage
 
 Since the native flavour of most of the **Typelevel libraries** is, at the moment, built against Scala Native 0.4.15, when using [Scala CLI] you have to declare the Scala native's version, i.e.
 
