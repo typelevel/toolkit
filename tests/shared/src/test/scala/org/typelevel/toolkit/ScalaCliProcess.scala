@@ -61,7 +61,7 @@ object ScalaCliProcess {
       )
       .evalTap { path =>
         val header = List(
-          s"//> using scala ${BuildInfo.scalaVersion}",
+          s"//> using scala ${BuildInfo.scalaBinaryVersion}",
           s"//> using toolkit typelevel:${BuildInfo.version}",
           s"//> using platform ${BuildInfo.platform}"
         ).mkString("", "\n", "\n")

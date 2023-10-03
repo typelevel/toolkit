@@ -72,6 +72,7 @@ lazy val tests = crossProject(JVMPlatform, JSPlatform, NativePlatform)
         ExclusionRule("com.lihaoyi", "os-lib_2.13")
       )
     ),
+    buildInfoKeys += scalaBinaryVersion,
     buildInfoKeys += BuildInfoKey.map(Compile / dependencyClasspath) {
       case (_, v) =>
         "classPath" -> v.seq
@@ -85,7 +86,7 @@ lazy val tests = crossProject(JVMPlatform, JSPlatform, NativePlatform)
         path.replace("/jre", "")
       } else path
     },
-    buildInfoKeys += "scala3" -> (scalaVersion.value.head == '3')
+    buildInfoKeys += "scala3" -> (scalaBinaryVersion.value == "3")
   )
   .jvmSettings(
     Test / test := (Test / test)
