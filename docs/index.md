@@ -106,7 +106,7 @@ a static reflection configuration for [this Enumeration method]. Thus using this
 Enumerations in your codebase, see [this comment] for more info.
 
 [Scala CLI]: https://scala-cli.virtuslab.org
-[Scala Toolkit]: https://github.com/VirtusLab/toolkit
+[Scala Toolkit]: https://docs.scala-lang.org/toolkit/introduction.html
 [Cats]: https://typelevel.org/cats
 [Cats Effect]: https://typelevel.org/cats-effect
 [fs2]: https://fs2.io/#/

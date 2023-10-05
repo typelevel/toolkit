@@ -27,7 +27,7 @@ scala-cli --power new typelevel/toolkit.g8
 * [Decline Effect]
 * [Munit Cats Effect]
 
-[Scala Toolkit]: https://virtuslab.com/blog/scala-toolkit-makes-scala-powerful-straight-out-of-the-box/
+[Scala Toolkit]: https://docs.scala-lang.org/toolkit/introduction.html
 [Cats]: https://typelevel.org/cats
 [Cats Effect]: https://typelevel.org/cats-effect
 [FS2]: https://fs2.io/#/
