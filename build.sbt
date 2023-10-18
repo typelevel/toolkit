@@ -1,5 +1,5 @@
 import laika.helium.config._
-import laika.rewrite.nav.{ChoiceConfig, Selections, SelectionConfig}
+import laika.config.{ChoiceConfig, Selections, SelectionConfig}
 import java.io.File
 
 ThisBuild / tlBaseVersion := "0.1"
