@@ -57,7 +57,7 @@ lazy val tests = crossProject(JVMPlatform, JSPlatform, NativePlatform)
       "org.typelevel" %%% "munit-cats-effect" % "2.0.0-M3" % Test,
       "co.fs2" %%% "fs2-io" % "3.9.2" % Test,
       // https://github.com/VirtusLab/scala-cli/issues/2421
-      "org.virtuslab.scala-cli" %% "cli" % "1.0.4" cross (CrossVersion.for2_13Use3) excludeAll (
+      "org.virtuslab.scala-cli" %% "cli" % "1.0.5" cross (CrossVersion.for2_13Use3) excludeAll (
         ExclusionRule("com.lihaoyi:geny_2.13"),
         ExclusionRule(
           "org.scala-lang.modules",
