@@ -428,51 +428,92 @@ If you want to save a list of a case class into a CSV file this helper method ma
 
 @:choice(scala-3)
 ```scala mdoc:reset:silent
+//> using lib "org.typelevel::toolkit::@VERSION@"
+
 import fs2.io.file.Files
 import fs2.data.csv.*
 import fs2.data.csv.generic.semiauto.*
 import fs2.io.file.Path
-import cats.effect.IO
-import fs2.Pipe
+import cats.effect.{IO, IOApp}
+import fs2.{Pipe, Stream}
 
+/** Define your case class and derive an encoder for it */
 case class YourCaseClass(n: String, i: Int)
-
 given CsvRowEncoder[YourCaseClass, String] = deriveCsvRowEncoder
 
-def writeCaseClassToCsv[A](path: Path)(using CsvRowEncoder[A, String]): Pipe[IO, A, Nothing] =
-    _.through(encodeUsingFirstHeaders(fullRows = true))
-      .through(fs2.text.utf8.encode)
-      .through(Files[IO].writeAll(path))
-      .drain
+/** This is our helper function that writes a case class as a csv given a path. */
+def writeCaseClassToCsv[A](
+    path: Path
+)(using CsvRowEncoder[A, String]): Pipe[IO, A, Nothing] =
+  _.through(encodeUsingFirstHeaders(fullRows = true))
+    .through(fs2.text.utf8.encode)
+    .through(Files[IO].writeAll(path))
+    .drain
 
-// Usage
-fs2.Stream.emits(Seq(YourCaseClass("s", 1))).through(writeCaseClassToCsv(Path("temp.csv")))
+/** Let's imagine we have a `Book` case class we would like to write to
+  * a .csv file.
+  */
+object WriteBooksToCsv extends IOApp.Simple:
+  case class Book(id: Long, name: String, isbn: String)
+  given CsvRowEncoder[Book, String] = deriveCsvRowEncoder
 
-```
+  val input = Seq(
+    Book(1, "Programming in Scala", "9780997148008"),
+    Book(2, "Hands-on Scala Programming", "9798387677205"),
+    Book(3, "Functional Programming in Scala", "9781617299582")
+  )
+
+  def run: IO[Unit] =
+    Stream
+      .emits(input)
+      .through(writeCaseClassToCsv(Path("books.csv")))
+      .compile
+      .drain *> IO.println("Finished writing books to books.csv.")```
 
 @:choice(scala-2)
 
 ```scala mdoc:reset:silent
+//> using lib "org.typelevel::toolkit::@VERSION@"
+
 import fs2.io.file.Files
-import fs2.data.csv._
-import fs2.data.csv.generic.semiauto._
+import fs2.data.csv.*
+import fs2.data.csv.generic.semiauto.*
 import fs2.io.file.Path
-import cats.effect.IO
-import fs2.Pipe
+import cats.effect.{IO, IOApp}
+import fs2.{Pipe, Stream}
 
+/** Define your case class and derive an encoder for it */
 case class YourCaseClass(n: String, i: Int)
-
 implicit val csvRowEncoder: CsvRowEncoder[YourCaseClass, String] = deriveCsvRowEncoder
 
-def writeCaseClassToCsv[A](path: Path)(using CsvRowEncoder[A, String]): Pipe[IO, A, Nothing] =
-    _.through(encodeUsingFirstHeaders(fullRows = true))
-      .through(fs2.text.utf8.encode)
-      .through(Files[IO].writeAll(path))
-      .drain
+/** This is our helper function that writes a case class as a csv given a path. */
+def writeCaseClassToCsv[A](
+    path: Path
+)(using CsvRowEncoder[A, String]): Pipe[IO, A, Nothing] =
+  _.through(encodeUsingFirstHeaders(fullRows = true))
+    .through(fs2.text.utf8.encode)
+    .through(Files[IO].writeAll(path))
+    .drain
 
-// Usage
-fs2.Stream.emits(Seq(YourCaseClass("s", 1))).through(writeCaseClassToCsv(Path("temp.csv")))
+/** Let's imagine we have a `Book` case class we would like to write to
+  * a .csv file.
+  */
+object WriteBooksToCsv extends IOApp.Simple:
+  case class Book(id: Long, name: String, isbn: String)
+  implicit val csvRowEncoder: [Book, String] = deriveCsvRowEncoder
 
+  val input = Seq(
+    Book(1, "Programming in Scala", "9780997148008"),
+    Book(2, "Hands-on Scala Programming", "9798387677205"),
+    Book(3, "Functional Programming in Scala", "9781617299582")
+  )
+
+  def run: IO[Unit] =
+    Stream
+      .emits(input)
+      .through(writeCaseClassToCsv(Path("books.csv")))
+      .compile
+      .drain *> IO.println("Finished writing books to books.csv.")
 ```
 
 @:@
