@@ -447,7 +447,6 @@ def writeCaseClassToCsv[A](
   _.through(encodeUsingFirstHeaders(fullRows = true))
     .through(fs2.text.utf8.encode)
     .through(Files[IO].writeAll(path))
-    .drain
 
 /** Let's imagine we have a `Book` case class we would like to write to
   * a .csv file.
@@ -499,7 +498,6 @@ object Helpers {
     _.through(encodeUsingFirstHeaders(fullRows = true))
       .through(fs2.text.utf8.encode)
       .through(Files[IO].writeAll(path))
-      .drain
 
 }
 
