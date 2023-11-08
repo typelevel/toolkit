@@ -424,6 +424,9 @@ object PerftConverter extends IOApp.Simple {
 
 If you want to save a list of a case class into a CSV file this utility may aid you:
 
+@:select(scala-version)
+
+@:choice(scala-3)
 ```scala
 // Define your case class and derive an encoder for it
 case class YourCaseClass(n: String, i: Int)
@@ -437,6 +440,23 @@ def writeCaseClassToCsv[A](
     .through(fs2.text.utf8.encode)
     .through(Files[IO].writeAll(path))
 ```
+
+@:choice(scala-2)
+```scala
+case class YourCaseClass(n: String, i: Int)
+implicit val csvRowEncoder: CsvRowEncoder[YourCaseClass, String] = deriveCsvRowEncoder
+
+object Helpers {
+  // Writes a case class as a csv given a path.
+  def writeCaseClassToCsv[A](
+    path: Path
+  )(implicit encoder: CsvRowEncoder[A, String]): Pipe[IO, A, Nothing] =
+    _.through(encodeUsingFirstHeaders(fullRows = true))
+      .through(fs2.text.utf8.encode)
+      .through(Files[IO].writeAll(path))
+}
+```
+@:@
 
 As an example, let's imagine we have a `Book` class we would like to write to a `.csv` file.
 
