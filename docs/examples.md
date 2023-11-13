@@ -10,7 +10,7 @@ This example was written by [Koroeskohr] and taken from the [Virtuslab Blog](htt
 @:choice(scala-3)
 
 ```scala mdoc:silent
-//> using toolkit typelevel::@VERSION@
+//> using toolkit typelevel:@VERSION@
 
 import cats.effect.*
 import io.circe.Decoder
@@ -47,7 +47,7 @@ object Main extends IOApp.Simple:
 @:choice(scala-2)
 
 ```scala mdoc:reset:silent
-//> using toolkit typelevel::@VERSION@
+//> using toolkit typelevel:@VERSION@
 
 import cats.effect._
 import io.circe.Decoder
@@ -108,7 +108,7 @@ $ echo -e "foo\nbar" | ./mkString --prefix "[" -d "," --suffix "]"
 
 @:choice(scala-3)
 ```scala mdoc:reset:silent
-//> using toolkit typelevel::@VERSION@
+//> using toolkit typelevel:@VERSION@
 
 import cats.effect.*
 import cats.syntax.all.*
@@ -136,7 +136,7 @@ object Main extends CommandIOApp("mkString", "Concatenates strings from stdin"):
 @:choice(scala-2)
 
 ```scala mdoc:reset:silent
-//> using toolkit typelevel::@VERSION@
+//> using toolkit typelevel:@VERSION@
 
 import cats.effect._
 import cats.syntax.all._
@@ -183,7 +183,7 @@ id,First Name,Age,flight number,destination
 
 @:choice(scala-3)
 ```scala mdoc:reset:silent
-//> using toolkit typelevel::@VERSION@
+//> using toolkit typelevel:@VERSION@
 
 import cats.effect.*
 import fs2.text
@@ -254,7 +254,7 @@ object CSVPrinter extends IOApp.Simple:
 
 @:choice(scala-2)
 ```scala mdoc:reset:silent
-//> using toolkit typelevel::@VERSION@
+//> using toolkit typelevel:@VERSION@
 
 import cats.effect._
 import fs2.text
@@ -358,7 +358,7 @@ perft 6 227689589
 @:choice(scala-3)
 
 ```scala mdoc:reset:silent
-//> using toolkit typelevel::@VERSION@
+//> using toolkit typelevel:@VERSION@
 
 import cats.effect.{IO, IOApp}
 import fs2.{Stream, text}
@@ -388,7 +388,7 @@ object PerftConverter extends IOApp.Simple:
 
 @:choice(scala-2)
 ```scala mdoc:reset:silent
-//> using toolkit typelevel::@VERSION@
+//> using toolkit typelevel:@VERSION@
 
 import cats.effect.{IO, IOApp}
 import fs2.{Stream, text}
@@ -464,7 +464,7 @@ As an example, let's imagine we have a `Book` class we would like to write to a 
 
 @:choice(scala-3)
 ```scala mdoc:reset:silent
-//> using toolkit typelevel::@VERSION@
+//> using toolkit typelevel:@VERSION@
 
 import fs2.data.csv.*
 import fs2.data.csv.generic.semiauto.*
@@ -501,7 +501,7 @@ object WriteBooksToCsv extends IOApp.Simple:
 @:choice(scala-2)
 
 ```scala mdoc:reset:silent
-//> using toolkit typelevel::@VERSION@
+//> using toolkit typelevel:@VERSION@
 
 import fs2.data.csv._
 import fs2.data.csv.generic.semiauto._
