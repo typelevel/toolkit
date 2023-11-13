@@ -110,6 +110,7 @@
     <li class="level1 nav-leaf"><a href="#command-line-version-of-mkstring">Command line version of mkString</a></li>
     <li class="level1 nav-leaf"><a href="#parsing-and-transforming-a-csv-file">Parsing and transforming a CSV file</a></li>
     <li class="level1 nav-leaf"><a href="#parsing-and-transforming-raw-data">Parsing and transforming raw data</a></li>
+    <li class="level1 nav-leaf"><a href="#writing-data-to-a-csv-file">Writing data to a CSV file</a></li>
   </ul>
 
   <p class="footer"></p>
@@ -269,7 +270,7 @@
         </div>
         
         <h2 id="parsing-and-transforming-a-csv-file" class="section"><a class="anchor-link left" href="#parsing-and-transforming-a-csv-file"><i class="icofont-laika link">&#xef71;</i></a>Parsing and transforming a CSV file</h2>
-        <p>Here, <a href="https://fs2-data.gnieh.org/documentation/csv/">fs2-data-csv</a> is used to read and parse a comma separated file. 
+        <p>Here, <a href="https://fs2-data.gnieh.org/documentation/csv/">fs2-data-csv</a> is used to read and parse a comma separated file.
         Manual encoders and decoders are defined for our <code>Passenger</code>s to show you how to do everything from scratch.</p>
         <p>Let&#39;s start with a CSV file that has records of fictious passengers registered for a flight:</p>
         <pre><code>id,First Name,Age,flight number,destination
@@ -332,7 +333,7 @@
 
 </span><span class="keyword">object</span><span> </span><span class="type-name">CSVPrinter</span><span> </span><span class="keyword">extends</span><span> </span><span class="type-name">IOApp</span><span>.</span><span class="type-name">Simple</span><span>:
 
-  </span><span class="comment">/** First we&#39;ll do some logging for each row, 
+  </span><span class="comment">/** First we&#39;ll do some logging for each row,
     * and then calculate and print the mean age */</span><span>
   </span><span class="keyword">val</span><span> </span><span class="identifier">run</span><span> =
     </span><span class="identifier">input</span><span>
@@ -406,7 +407,7 @@
     .</span><span class="identifier">through</span><span>(</span><span class="identifier">decodeUsingHeaders</span><span>[</span><span class="type-name">Passenger</span><span>]())
 
 
-  </span><span class="comment">/** First we&#39;ll do some logging for each row, 
+  </span><span class="comment">/** First we&#39;ll do some logging for each row,
     * and then calculate and print the mean age */</span><span>
   </span><span class="keyword">val</span><span> </span><span class="identifier">run</span><span> =
     </span><span class="identifier">input</span><span>
@@ -501,6 +502,119 @@ perft 6 227689589</code></pre>
   }
 
   </span><span class="keyword">def</span><span> </span><span class="declaration-name">run</span><span>: </span><span class="type-name">IO</span><span>[</span><span class="type-name">Unit</span><span>] = </span><span class="identifier">converter</span><span>.</span><span class="identifier">compile</span><span>.</span><span class="identifier">drain</span><span>
+}</span></code></pre>
+          </div>
+        </div>
+        
+        <h2 id="writing-data-to-a-csv-file" class="section"><a class="anchor-link left" href="#writing-data-to-a-csv-file"><i class="icofont-laika link">&#xef71;</i></a>Writing data to a CSV file</h2>
+        <p>If you want to save a list of a case class into a CSV file this utility may aid you:</p>
+        <div class="tab-container" data-tab-group="scala-version">
+          <ul class="tab-group">
+            <li class="tab active" data-choice-name="scala-3"><a href="#">Scala 3</a></li>
+            <li class="tab" data-choice-name="scala-2"><a href="#">Scala 2</a></li>
+          </ul>
+          <div class="tab-content active" data-choice-name="scala-3">
+            <pre class="keep-together pdf epub"><code class="nohighlight"><span class="comment">// Define your case class and derive an encoder for it
+</span><span class="keyword">case</span><span> </span><span class="keyword">class</span><span> </span><span class="type-name">YourCaseClass</span><span>(</span><span class="identifier">n</span><span>: </span><span class="type-name">String</span><span>, </span><span class="identifier">i</span><span>: </span><span class="type-name">Int</span><span>)
+</span><span class="keyword">given</span><span> </span><span class="type-name">CsvRowEncoder</span><span>[</span><span class="type-name">YourCaseClass</span><span>, </span><span class="type-name">String</span><span>] = </span><span class="identifier">deriveCsvRowEncoder</span><span>
+
+</span><span class="comment">// Writes a case class as a csv given a path.
+</span><span class="keyword">def</span><span> </span><span class="declaration-name">writeCaseClassToCsv</span><span>[</span><span class="type-name">A</span><span>](
+    </span><span class="identifier">path</span><span>: </span><span class="type-name">Path</span><span>
+)(</span><span class="keyword">using</span><span> </span><span class="type-name">CsvRowEncoder</span><span>[</span><span class="type-name">A</span><span>, </span><span class="type-name">String</span><span>]): </span><span class="type-name">Pipe</span><span>[</span><span class="type-name">IO</span><span>, </span><span class="type-name">A</span><span>, </span><span class="type-name">Nothing</span><span>] =
+  </span><span class="identifier">_</span><span>.</span><span class="identifier">through</span><span>(</span><span class="identifier">encodeUsingFirstHeaders</span><span>(</span><span class="identifier">fullRows</span><span> = </span><span class="boolean-literal">true</span><span>))
+    .</span><span class="identifier">through</span><span>(</span><span class="identifier">fs2</span><span>.</span><span class="identifier">text</span><span>.</span><span class="identifier">utf8</span><span>.</span><span class="identifier">encode</span><span>)
+    .</span><span class="identifier">through</span><span>(</span><span class="type-name">Files</span><span>[</span><span class="type-name">IO</span><span>].</span><span class="identifier">writeAll</span><span>(</span><span class="identifier">path</span><span>))</span></code></pre>
+          </div>
+          <div class="tab-content" data-choice-name="scala-2">
+            <pre class="keep-together pdf epub"><code class="nohighlight"><span class="keyword">case</span><span> </span><span class="keyword">class</span><span> </span><span class="type-name">YourCaseClass</span><span>(</span><span class="identifier">n</span><span>: </span><span class="type-name">String</span><span>, </span><span class="identifier">i</span><span>: </span><span class="type-name">Int</span><span>)
+</span><span class="keyword">implicit</span><span> </span><span class="keyword">val</span><span> </span><span class="identifier">csvRowEncoder</span><span>: </span><span class="type-name">CsvRowEncoder</span><span>[</span><span class="type-name">YourCaseClass</span><span>, </span><span class="type-name">String</span><span>] = </span><span class="identifier">deriveCsvRowEncoder</span><span>
+
+</span><span class="keyword">object</span><span> </span><span class="type-name">Helpers</span><span> {
+  </span><span class="comment">// Writes a case class as a csv given a path.
+</span><span>  </span><span class="keyword">def</span><span> </span><span class="declaration-name">writeCaseClassToCsv</span><span>[</span><span class="type-name">A</span><span>](
+    </span><span class="identifier">path</span><span>: </span><span class="type-name">Path</span><span>
+  )(</span><span class="keyword">implicit</span><span> </span><span class="identifier">encoder</span><span>: </span><span class="type-name">CsvRowEncoder</span><span>[</span><span class="type-name">A</span><span>, </span><span class="type-name">String</span><span>]): </span><span class="type-name">Pipe</span><span>[</span><span class="type-name">IO</span><span>, </span><span class="type-name">A</span><span>, </span><span class="type-name">Nothing</span><span>] =
+    </span><span class="identifier">_</span><span>.</span><span class="identifier">through</span><span>(</span><span class="identifier">encodeUsingFirstHeaders</span><span>(</span><span class="identifier">fullRows</span><span> = </span><span class="boolean-literal">true</span><span>))
+      .</span><span class="identifier">through</span><span>(</span><span class="identifier">fs2</span><span>.</span><span class="identifier">text</span><span>.</span><span class="identifier">utf8</span><span>.</span><span class="identifier">encode</span><span>)
+      .</span><span class="identifier">through</span><span>(</span><span class="type-name">Files</span><span>[</span><span class="type-name">IO</span><span>].</span><span class="identifier">writeAll</span><span>(</span><span class="identifier">path</span><span>))
+}</span></code></pre>
+          </div>
+        </div>
+        <p>As an example, let&#39;s imagine we have a <code>Book</code> class we would like to write to a <code>.csv</code> file.</p>
+        <div class="tab-container" data-tab-group="scala-version">
+          <ul class="tab-group">
+            <li class="tab active" data-choice-name="scala-3"><a href="#">Scala 3</a></li>
+            <li class="tab" data-choice-name="scala-2"><a href="#">Scala 2</a></li>
+          </ul>
+          <div class="tab-content active" data-choice-name="scala-3">
+            <pre><code class="nohighlight"><span class="comment">//&gt; using lib &quot;org.typelevel::toolkit::0.1.17&quot;
+</span><span>
+</span><span class="keyword">import</span><span> </span><span class="identifier">fs2</span><span>.</span><span class="identifier">data</span><span>.</span><span class="identifier">csv</span><span>.*
+</span><span class="keyword">import</span><span> </span><span class="identifier">fs2</span><span>.</span><span class="identifier">data</span><span>.</span><span class="identifier">csv</span><span>.</span><span class="identifier">generic</span><span>.</span><span class="identifier">semiauto</span><span>.*
+</span><span class="keyword">import</span><span> </span><span class="identifier">fs2</span><span>.</span><span class="identifier">io</span><span>.</span><span class="identifier">file</span><span>.{</span><span class="type-name">Files</span><span>, </span><span class="type-name">Path</span><span>}
+</span><span class="keyword">import</span><span> </span><span class="identifier">cats</span><span>.</span><span class="identifier">effect</span><span>.{</span><span class="type-name">IO</span><span>, </span><span class="type-name">IOApp</span><span>}
+</span><span class="keyword">import</span><span> </span><span class="identifier">fs2</span><span>.{</span><span class="type-name">Pipe</span><span>, </span><span class="type-name">Stream</span><span>}
+
+</span><span class="keyword">def</span><span> </span><span class="declaration-name">writeCaseClassToCsv</span><span>[</span><span class="type-name">A</span><span>](
+    </span><span class="identifier">path</span><span>: </span><span class="type-name">Path</span><span>
+)(</span><span class="keyword">using</span><span> </span><span class="type-name">CsvRowEncoder</span><span>[</span><span class="type-name">A</span><span>, </span><span class="type-name">String</span><span>]): </span><span class="type-name">Pipe</span><span>[</span><span class="type-name">IO</span><span>, </span><span class="type-name">A</span><span>, </span><span class="type-name">Nothing</span><span>] =
+  </span><span class="identifier">_</span><span>.</span><span class="identifier">through</span><span>(</span><span class="identifier">encodeUsingFirstHeaders</span><span>(</span><span class="identifier">fullRows</span><span> = </span><span class="boolean-literal">true</span><span>))
+    .</span><span class="identifier">through</span><span>(</span><span class="identifier">fs2</span><span>.</span><span class="identifier">text</span><span>.</span><span class="identifier">utf8</span><span>.</span><span class="identifier">encode</span><span>)
+    .</span><span class="identifier">through</span><span>(</span><span class="type-name">Files</span><span>[</span><span class="type-name">IO</span><span>].</span><span class="identifier">writeAll</span><span>(</span><span class="identifier">path</span><span>))
+
+
+</span><span class="keyword">object</span><span> </span><span class="type-name">WriteBooksToCsv</span><span> </span><span class="keyword">extends</span><span> </span><span class="type-name">IOApp</span><span>.</span><span class="type-name">Simple</span><span>:
+  </span><span class="keyword">case</span><span> </span><span class="keyword">class</span><span> </span><span class="type-name">Book</span><span>(</span><span class="identifier">id</span><span>: </span><span class="type-name">Long</span><span>, </span><span class="identifier">name</span><span>: </span><span class="type-name">String</span><span>, </span><span class="identifier">isbn</span><span>: </span><span class="type-name">String</span><span>)
+  </span><span class="keyword">given</span><span> </span><span class="type-name">CsvRowEncoder</span><span>[</span><span class="type-name">Book</span><span>, </span><span class="type-name">String</span><span>] = </span><span class="identifier">deriveCsvRowEncoder</span><span>
+
+  </span><span class="keyword">val</span><span> </span><span class="identifier">input</span><span> = </span><span class="type-name">Seq</span><span>(
+    </span><span class="type-name">Book</span><span>(</span><span class="number-literal">1</span><span>, </span><span class="string-literal">&quot;Programming in Scala&quot;</span><span>, </span><span class="string-literal">&quot;9780997148008&quot;</span><span>),
+    </span><span class="type-name">Book</span><span>(</span><span class="number-literal">2</span><span>, </span><span class="string-literal">&quot;Hands-on Scala Programming&quot;</span><span>, </span><span class="string-literal">&quot;9798387677205&quot;</span><span>),
+    </span><span class="type-name">Book</span><span>(</span><span class="number-literal">3</span><span>, </span><span class="string-literal">&quot;Functional Programming in Scala&quot;</span><span>, </span><span class="string-literal">&quot;9781617299582&quot;</span><span>)
+  )
+
+  </span><span class="keyword">def</span><span> </span><span class="declaration-name">run</span><span>: </span><span class="type-name">IO</span><span>[</span><span class="type-name">Unit</span><span>] =
+    </span><span class="type-name">Stream</span><span>
+      .</span><span class="identifier">emits</span><span>(</span><span class="identifier">input</span><span>)
+      .</span><span class="identifier">through</span><span>(</span><span class="identifier">writeCaseClassToCsv</span><span>(</span><span class="type-name">Path</span><span>(</span><span class="string-literal">&quot;books.csv&quot;</span><span>)))
+      .</span><span class="identifier">compile</span><span>
+      .</span><span class="identifier">drain</span><span> *&gt; </span><span class="type-name">IO</span><span>.</span><span class="identifier">println</span><span>(</span><span class="string-literal">&quot;Finished writing books to books.csv.&quot;</span><span>)</span></code></pre>
+          </div>
+          <div class="tab-content" data-choice-name="scala-2">
+            <pre><code class="nohighlight"><span class="comment">//&gt; using lib &quot;org.typelevel::toolkit::0.1.17&quot;
+</span><span>
+</span><span class="keyword">import</span><span> </span><span class="identifier">fs2</span><span>.</span><span class="identifier">data</span><span>.</span><span class="identifier">csv</span><span>.</span><span class="identifier">_</span><span>
+</span><span class="keyword">import</span><span> </span><span class="identifier">fs2</span><span>.</span><span class="identifier">data</span><span>.</span><span class="identifier">csv</span><span>.</span><span class="identifier">generic</span><span>.</span><span class="identifier">semiauto</span><span>.</span><span class="identifier">_</span><span>
+</span><span class="keyword">import</span><span> </span><span class="identifier">fs2</span><span>.</span><span class="identifier">io</span><span>.</span><span class="identifier">file</span><span>.{</span><span class="type-name">Files</span><span>, </span><span class="type-name">Path</span><span>}
+</span><span class="keyword">import</span><span> </span><span class="identifier">cats</span><span>.</span><span class="identifier">effect</span><span>.{</span><span class="type-name">IO</span><span>, </span><span class="type-name">IOApp</span><span>}
+</span><span class="keyword">import</span><span> </span><span class="identifier">fs2</span><span>.{</span><span class="type-name">Pipe</span><span>, </span><span class="type-name">Stream</span><span>}
+
+</span><span class="keyword">object</span><span> </span><span class="type-name">Helpers</span><span> {
+  </span><span class="keyword">def</span><span> </span><span class="declaration-name">writeCaseClassToCsv</span><span>[</span><span class="type-name">A</span><span>](
+      </span><span class="identifier">path</span><span>: </span><span class="type-name">Path</span><span>
+  )(</span><span class="keyword">implicit</span><span> </span><span class="identifier">encoder</span><span>: </span><span class="type-name">CsvRowEncoder</span><span>[</span><span class="type-name">A</span><span>, </span><span class="type-name">String</span><span>]): </span><span class="type-name">Pipe</span><span>[</span><span class="type-name">IO</span><span>, </span><span class="type-name">A</span><span>, </span><span class="type-name">Nothing</span><span>] =
+    </span><span class="identifier">_</span><span>.</span><span class="identifier">through</span><span>(</span><span class="identifier">encodeUsingFirstHeaders</span><span>(</span><span class="identifier">fullRows</span><span> = </span><span class="boolean-literal">true</span><span>))
+      .</span><span class="identifier">through</span><span>(</span><span class="identifier">fs2</span><span>.</span><span class="identifier">text</span><span>.</span><span class="identifier">utf8</span><span>.</span><span class="identifier">encode</span><span>)
+      .</span><span class="identifier">through</span><span>(</span><span class="type-name">Files</span><span>[</span><span class="type-name">IO</span><span>].</span><span class="identifier">writeAll</span><span>(</span><span class="identifier">path</span><span>))
+}
+
+</span><span class="keyword">object</span><span> </span><span class="type-name">WriteBooksToCsv</span><span> </span><span class="keyword">extends</span><span> </span><span class="type-name">IOApp</span><span>.</span><span class="type-name">Simple</span><span> {
+  </span><span class="keyword">case</span><span> </span><span class="keyword">class</span><span> </span><span class="type-name">Book</span><span>(</span><span class="identifier">id</span><span>: </span><span class="type-name">Long</span><span>, </span><span class="identifier">name</span><span>: </span><span class="type-name">String</span><span>, </span><span class="identifier">isbn</span><span>: </span><span class="type-name">String</span><span>)
+  </span><span class="keyword">implicit</span><span> </span><span class="keyword">val</span><span> </span><span class="identifier">csvRowEncoder</span><span>: </span><span class="type-name">CsvRowEncoder</span><span>[</span><span class="type-name">Book</span><span>, </span><span class="type-name">String</span><span>] = </span><span class="identifier">deriveCsvRowEncoder</span><span>
+
+  </span><span class="keyword">val</span><span> </span><span class="identifier">input</span><span> = </span><span class="type-name">Seq</span><span>(
+    </span><span class="type-name">Book</span><span>(</span><span class="number-literal">1</span><span>, </span><span class="string-literal">&quot;Programming in Scala&quot;</span><span>, </span><span class="string-literal">&quot;9780997148008&quot;</span><span>),
+    </span><span class="type-name">Book</span><span>(</span><span class="number-literal">2</span><span>, </span><span class="string-literal">&quot;Hands-on Scala Programming&quot;</span><span>, </span><span class="string-literal">&quot;9798387677205&quot;</span><span>),
+    </span><span class="type-name">Book</span><span>(</span><span class="number-literal">3</span><span>, </span><span class="string-literal">&quot;Functional Programming in Scala&quot;</span><span>, </span><span class="string-literal">&quot;9781617299582&quot;</span><span>)
+  )
+
+  </span><span class="keyword">def</span><span> </span><span class="declaration-name">run</span><span>: </span><span class="type-name">IO</span><span>[</span><span class="type-name">Unit</span><span>] =
+    </span><span class="type-name">Stream</span><span>
+      .</span><span class="identifier">emits</span><span>(</span><span class="identifier">input</span><span>)
+      .</span><span class="identifier">through</span><span>(</span><span class="type-name">Helpers</span><span>.</span><span class="identifier">writeCaseClassToCsv</span><span>(</span><span class="type-name">Path</span><span>(</span><span class="string-literal">&quot;books.csv&quot;</span><span>)))
+      .</span><span class="identifier">compile</span><span>
+      .</span><span class="identifier">drain</span><span> *&gt; </span><span class="type-name">IO</span><span>.</span><span class="identifier">println</span><span>(</span><span class="string-literal">&quot;Finished writing books to books.csv.&quot;</span><span>)
 }</span></code></pre>
           </div>
         </div>
