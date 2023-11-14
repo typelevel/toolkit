@@ -75,13 +75,9 @@ object ScalaCliProcess {
   def command(args: List[String]): IO[Unit] = scalaCli(args)
 
   def run(body: String): IO[Unit] =
-    writeToFile(body)(false).use(f =>
-      scalaCli("run" :: "--native-version" :: "0.4.15" :: f :: Nil)
-    )
+    writeToFile(body)(false).use(f => scalaCli("run" :: f :: Nil))
 
   def test(body: String): IO[Unit] =
-    writeToFile(body)(true).use(f =>
-      scalaCli("test" :: "--native-version" :: "0.4.15" :: f :: Nil)
-    )
+    writeToFile(body)(true).use(f => scalaCli("test" :: f :: Nil))
 
 }

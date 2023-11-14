@@ -10,7 +10,7 @@ This example was written by [Koroeskohr] and taken from the [Virtuslab Blog](htt
 @:choice(scala-3)
 
 ```scala mdoc:silent
-//> using lib "org.typelevel::toolkit::@VERSION@"
+//> using toolkit typelevel:@VERSION@
 
 import cats.effect.*
 import io.circe.Decoder
@@ -47,7 +47,7 @@ object Main extends IOApp.Simple:
 @:choice(scala-2)
 
 ```scala mdoc:reset:silent
-//> using lib "org.typelevel::toolkit::@VERSION@"
+//> using toolkit typelevel:@VERSION@
 
 import cats.effect._
 import io.circe.Decoder
@@ -108,7 +108,7 @@ $ echo -e "foo\nbar" | ./mkString --prefix "[" -d "," --suffix "]"
 
 @:choice(scala-3)
 ```scala mdoc:reset:silent
-//> using lib "org.typelevel::toolkit::@VERSION@"
+//> using toolkit typelevel:@VERSION@
 
 import cats.effect.*
 import cats.syntax.all.*
@@ -136,7 +136,7 @@ object Main extends CommandIOApp("mkString", "Concatenates strings from stdin"):
 @:choice(scala-2)
 
 ```scala mdoc:reset:silent
-//> using lib "org.typelevel::toolkit::@VERSION@"
+//> using toolkit typelevel:@VERSION@
 
 import cats.effect._
 import cats.syntax.all._
@@ -166,7 +166,7 @@ object Main extends CommandIOApp("mkString", "Concatenates strings from stdin") 
 
 ## Parsing and transforming a CSV file
 
-Here, [fs2-data-csv] is used to read and parse a comma separated file. 
+Here, [fs2-data-csv] is used to read and parse a comma separated file.
 Manual encoders and decoders are defined for our `Passenger`s to show you how to do everything from scratch.
 
 Let's start with a CSV file that has records of fictious passengers registered for a flight:
@@ -183,7 +183,7 @@ id,First Name,Age,flight number,destination
 
 @:choice(scala-3)
 ```scala mdoc:reset:silent
-//> using lib "org.typelevel::toolkit::@VERSION@"
+//> using toolkit typelevel:@VERSION@
 
 import cats.effect.*
 import fs2.text
@@ -233,7 +233,7 @@ val input = Files[IO]
 
 object CSVPrinter extends IOApp.Simple:
 
-  /** First we'll do some logging for each row, 
+  /** First we'll do some logging for each row,
     * and then calculate and print the mean age */
   val run =
     input
@@ -254,7 +254,7 @@ object CSVPrinter extends IOApp.Simple:
 
 @:choice(scala-2)
 ```scala mdoc:reset:silent
-//> using lib "org.typelevel::toolkit::@VERSION@"
+//> using toolkit typelevel:@VERSION@
 
 import cats.effect._
 import fs2.text
@@ -310,7 +310,7 @@ object CSVPrinter extends IOApp.Simple {
     .through(decodeUsingHeaders[Passenger]())
 
 
-  /** First we'll do some logging for each row, 
+  /** First we'll do some logging for each row,
     * and then calculate and print the mean age */
   val run =
     input
@@ -358,7 +358,7 @@ perft 6 227689589
 @:choice(scala-3)
 
 ```scala mdoc:reset:silent
-//> using lib "org.typelevel::toolkit::@VERSION@"
+//> using toolkit typelevel:@VERSION@
 
 import cats.effect.{IO, IOApp}
 import fs2.{Stream, text}
@@ -388,7 +388,7 @@ object PerftConverter extends IOApp.Simple:
 
 @:choice(scala-2)
 ```scala mdoc:reset:silent
-//> using lib "org.typelevel::toolkit::@VERSION@"
+//> using toolkit typelevel:@VERSION@
 
 import cats.effect.{IO, IOApp}
 import fs2.{Stream, text}
@@ -419,6 +419,127 @@ object PerftConverter extends IOApp.Simple {
 }
 ```
 @:@
+
+## Writing data to a CSV file
+
+If you want to save a list of a case class into a CSV file this utility may aid you:
+
+@:select(scala-version)
+
+@:choice(scala-3)
+```scala
+// Define your case class and derive an encoder for it
+case class YourCaseClass(n: String, i: Int)
+given CsvRowEncoder[YourCaseClass, String] = deriveCsvRowEncoder
+
+// Writes a case class as a csv given a path.
+def writeCaseClassToCsv[A](
+    path: Path
+)(using CsvRowEncoder[A, String]): Pipe[IO, A, Nothing] =
+  _.through(encodeUsingFirstHeaders(fullRows = true))
+    .through(fs2.text.utf8.encode)
+    .through(Files[IO].writeAll(path))
+```
+
+@:choice(scala-2)
+```scala
+case class YourCaseClass(n: String, i: Int)
+implicit val csvRowEncoder: CsvRowEncoder[YourCaseClass, String] = deriveCsvRowEncoder
+
+object Helpers {
+  // Writes a case class as a csv given a path.
+  def writeCaseClassToCsv[A](
+    path: Path
+  )(implicit encoder: CsvRowEncoder[A, String]): Pipe[IO, A, Nothing] =
+    _.through(encodeUsingFirstHeaders(fullRows = true))
+      .through(fs2.text.utf8.encode)
+      .through(Files[IO].writeAll(path))
+}
+```
+@:@
+
+As an example, let's imagine we have a `Book` class we would like to write to a `.csv` file.
+
+@:select(scala-version)
+
+@:choice(scala-3)
+```scala mdoc:reset:silent
+//> using toolkit typelevel:@VERSION@
+
+import fs2.data.csv.*
+import fs2.data.csv.generic.semiauto.*
+import fs2.io.file.{Files, Path}
+import cats.effect.{IO, IOApp}
+import fs2.{Pipe, Stream}
+
+def writeCaseClassToCsv[A](
+    path: Path
+)(using CsvRowEncoder[A, String]): Pipe[IO, A, Nothing] =
+  _.through(encodeUsingFirstHeaders(fullRows = true))
+    .through(fs2.text.utf8.encode)
+    .through(Files[IO].writeAll(path))
+
+
+object WriteBooksToCsv extends IOApp.Simple:
+  case class Book(id: Long, name: String, isbn: String)
+  given CsvRowEncoder[Book, String] = deriveCsvRowEncoder
+
+  val input = Seq(
+    Book(1, "Programming in Scala", "9780997148008"),
+    Book(2, "Hands-on Scala Programming", "9798387677205"),
+    Book(3, "Functional Programming in Scala", "9781617299582")
+  )
+
+  def run: IO[Unit] =
+    Stream
+      .emits(input)
+      .through(writeCaseClassToCsv(Path("books.csv")))
+      .compile
+      .drain *> IO.println("Finished writing books to books.csv.")
+```
+
+@:choice(scala-2)
+
+```scala mdoc:reset:silent
+//> using toolkit typelevel:@VERSION@
+
+import fs2.data.csv._
+import fs2.data.csv.generic.semiauto._
+import fs2.io.file.{Files, Path}
+import cats.effect.{IO, IOApp}
+import fs2.{Pipe, Stream}
+
+object Helpers {
+  def writeCaseClassToCsv[A](
+      path: Path
+  )(implicit encoder: CsvRowEncoder[A, String]): Pipe[IO, A, Nothing] =
+    _.through(encodeUsingFirstHeaders(fullRows = true))
+      .through(fs2.text.utf8.encode)
+      .through(Files[IO].writeAll(path))
+}
+
+object WriteBooksToCsv extends IOApp.Simple {
+  case class Book(id: Long, name: String, isbn: String)
+  implicit val csvRowEncoder: CsvRowEncoder[Book, String] = deriveCsvRowEncoder
+
+  val input = Seq(
+    Book(1, "Programming in Scala", "9780997148008"),
+    Book(2, "Hands-on Scala Programming", "9798387677205"),
+    Book(3, "Functional Programming in Scala", "9781617299582")
+  )
+
+  def run: IO[Unit] =
+    Stream
+      .emits(input)
+      .through(Helpers.writeCaseClassToCsv(Path("books.csv")))
+      .compile
+      .drain *> IO.println("Finished writing books to books.csv.")
+}
+```
+
+@:@
+
+
 
 [fs2]: https://fs2.io/#/
 [fs2-data-csv]: https://fs2-data.gnieh.org/documentation/csv/
