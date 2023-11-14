@@ -41,7 +41,7 @@ lazy val toolkitTest = crossProject(JVMPlatform, JSPlatform, NativePlatform)
       "org.typelevel" %%% "cats-core" % "2.10.0",
       "org.typelevel" %%% "cats-effect-testkit" % "3.5.2",
       "org.scalameta" %%% "munit" % "1.0.0-M10", // not % Test, on purpose :)
-      "org.typelevel" %%% "munit-cats-effect" % "2.0.0-M3"
+      "org.typelevel" %%% "munit-cats-effect" % "2.0.0-M4"
     ),
     mimaPreviousArtifacts := Set()
   )
@@ -54,7 +54,7 @@ lazy val tests = crossProject(JVMPlatform, JSPlatform, NativePlatform)
       if (scalaBinaryVersion.value == "2.13") Seq("-Ytasty-reader") else Nil
     },
     libraryDependencies ++= Seq(
-      "org.typelevel" %%% "munit-cats-effect" % "2.0.0-M3" % Test,
+      "org.typelevel" %%% "munit-cats-effect" % "2.0.0-M4" % Test,
       "co.fs2" %%% "fs2-io" % "3.9.3" % Test,
       // https://github.com/VirtusLab/scala-cli/issues/2421
       "org.virtuslab.scala-cli" %% "cli" % "1.0.6" cross (CrossVersion.for2_13Use3) excludeAll (
