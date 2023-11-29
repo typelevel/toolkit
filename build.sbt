@@ -56,21 +56,7 @@ lazy val tests = crossProject(JVMPlatform, JSPlatform, NativePlatform)
     libraryDependencies ++= Seq(
       "org.typelevel" %%% "munit-cats-effect" % "2.0.0-M4" % Test,
       "co.fs2" %%% "fs2-io" % "3.9.3" % Test,
-      // https://github.com/VirtusLab/scala-cli/issues/2421
-      "org.virtuslab.scala-cli" %% "cli" % "1.1.0" cross (CrossVersion.for2_13Use3) excludeAll (
-        ExclusionRule("com.lihaoyi:geny_2.13"),
-        ExclusionRule(
-          "org.scala-lang.modules",
-          "scala-collection-compat_2.13"
-        ),
-        ExclusionRule(
-          "com.github.plokhotnyuk.jsoniter-scala",
-          "jsoniter-scala-core_2.13"
-        ),
-        ExclusionRule("com.lihaoyi", "sourcecode_2.13"),
-        ExclusionRule("ai.kien", "python-native-libs_2.13"),
-        ExclusionRule("com.lihaoyi", "os-lib_2.13")
-      )
+      "org.virtuslab.scala-cli" %% "cli" % "1.1.0" cross (CrossVersion.for2_13Use3)
     ),
     buildInfoKeys += scalaBinaryVersion,
     buildInfoKeys += BuildInfoKey.map(Compile / dependencyClasspath) {
