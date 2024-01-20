@@ -22,7 +22,7 @@ lazy val toolkit = crossProject(JVMPlatform, JSPlatform, NativePlatform)
     libraryDependencies ++= Seq(
       "org.typelevel" %%% "cats-core" % "2.10.0",
       "org.typelevel" %%% "cats-effect" % "3.5.3",
-      "co.fs2" %%% "fs2-io" % "3.9.3",
+      "co.fs2" %%% "fs2-io" % "3.9.4",
       "org.gnieh" %%% "fs2-data-csv" % "1.10.0",
       "org.gnieh" %%% "fs2-data-csv-generic" % "1.10.0",
       "org.http4s" %%% "http4s-ember-client" % "0.23.25",
@@ -55,7 +55,7 @@ lazy val tests = crossProject(JVMPlatform, JSPlatform, NativePlatform)
     },
     libraryDependencies ++= Seq(
       "org.typelevel" %%% "munit-cats-effect" % "2.0.0-M4" % Test,
-      "co.fs2" %%% "fs2-io" % "3.9.3" % Test,
+      "co.fs2" %%% "fs2-io" % "3.9.4" % Test,
       "org.virtuslab.scala-cli" %% "cli" % "1.1.2" cross (CrossVersion.for2_13Use3)
     ),
     buildInfoKeys += scalaBinaryVersion,
