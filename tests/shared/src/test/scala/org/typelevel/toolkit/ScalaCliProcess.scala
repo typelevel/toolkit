@@ -17,7 +17,6 @@
 package org.typelevel.toolkit
 
 import cats.effect.kernel.Resource
-import cats.effect.std.Console
 import cats.effect.IO
 import cats.syntax.parallel._
 import buildinfo.BuildInfo
@@ -43,9 +42,17 @@ object ScalaCliProcess {
       ).parFlatMapN {
         case (0, _, _) => IO.unit
         case (exitCode, stdout, stdErr) =>
-          IO.println(stdout) >> Console[IO].errorln(stdErr) >> IO.delay(
-            fail(s"Non zero exit code ($exitCode) for ${args.mkString(" ")}")
-          )
+          val errorMessage: String = List(
+            Option(stdout).filter(_.nonEmpty).map(s => s"[STDOUT]: $s"),
+            Option(stdErr).filter(_.nonEmpty).map(s => s"[STDERR]: $s")
+          ).foldLeft(
+            s"Non zero exit code ($exitCode) for ${args.mkString(" ")}"
+          ) {
+            case (summary, Some(err)) => s"$err\n$summary"
+            case (summary, None)      => summary
+          }
+
+          IO.delay(fail(errorMessage))
       }
     )
 
