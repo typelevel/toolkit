@@ -10,7 +10,7 @@ ThisBuild / mergifyStewardConfig ~= {
   _.map(_.copy(author = "typelevel-steward[bot]"))
 }
 
-ThisBuild / crossScalaVersions := Seq("2.13.12", "3.3.3")
+ThisBuild / crossScalaVersions := Seq("2.13.13", "3.3.3")
 
 lazy val root = tlCrossRootProject
   .aggregate(toolkit, toolkitTest, tests)
@@ -50,9 +50,6 @@ lazy val tests = crossProject(JVMPlatform, JSPlatform, NativePlatform)
   .in(file("tests"))
   .settings(
     name := "tests",
-    scalacOptions ++= {
-      if (scalaBinaryVersion.value == "2.13") Seq("-Ytasty-reader") else Nil
-    },
     libraryDependencies ++= Seq(
       "org.typelevel" %%% "munit-cats-effect" % "2.0.0-M4" % Test,
       "co.fs2" %%% "fs2-io" % "3.10.2" % Test,
