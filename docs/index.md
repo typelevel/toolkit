@@ -20,7 +20,7 @@ and it's published for Scala 2.12, 2.13 and 3.2.2.
 
 To use it with [Scala CLI] use this directive:
 ```scala
-//> using toolkit typelevel:latest
+//> using toolkit typelevel:default
 ```
 
 Albeit being created to be used with [Scala CLI], typelevel-toolkit can be imported into your `build.sbt` using:
@@ -50,7 +50,7 @@ scala-cli --power new typelevel/toolkit.g8
 @:select(scala-version)
 @:choice(scala-3)
 ```scala mdoc:reset:silent
-//> using toolkit typelevel:latest
+//> using toolkit typelevel:default
 
 import cats.effect.*
 
@@ -59,7 +59,7 @@ object Hello extends IOApp.Simple:
 ```
 @:choice(scala-2)
 ```scala mdoc:reset:silent
-//> using toolkit typelevel:latest
+//> using toolkit typelevel:default
 
 import cats.effect._
 
@@ -76,7 +76,7 @@ Since the native flavour of most of the **Typelevel libraries** is, at the momen
 @:select(scala-version)
 @:choice(scala-3)
 ```scala mdoc:reset:silent
-//> using toolkit typelevel:latest
+//> using toolkit typelevel:default
 //> using platform native
 //> using nativeVersion 0.4.15
 
@@ -87,7 +87,7 @@ object Hello extends IOApp.Simple:
 ```
 @:choice(scala-2)
 ```scala mdoc:reset:silent
-//> using toolkit typelevel:latest
+//> using toolkit typelevel:default
 //> using platform native
 //> using nativeVersion 0.4.15
 
