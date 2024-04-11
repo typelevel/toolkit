@@ -53,7 +53,7 @@ lazy val tests = crossProject(JVMPlatform, JSPlatform, NativePlatform)
     libraryDependencies ++= Seq(
       "org.typelevel" %%% "munit-cats-effect" % "2.0.0-M4" % Test,
       "co.fs2" %%% "fs2-io" % "3.10.2" % Test,
-      "org.virtuslab.scala-cli" %% "cli" % "1.2.1" cross (CrossVersion.for2_13Use3)
+      "org.virtuslab.scala-cli" %% "cli" % "1.2.2" cross (CrossVersion.for2_13Use3)
     ),
     buildInfoKeys += scalaBinaryVersion,
     buildInfoKeys += BuildInfoKey.map(Compile / dependencyClasspath) {
