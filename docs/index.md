@@ -16,7 +16,7 @@ Typelevel toolkit is a meta library that currently includes these libraries:
 - [Decline Effect]
 - [Munit Cats Effect]
 
-and it's published for Scala 2.12, 2.13 and 3.2.2.
+and it's published for Scala 2.13 and 3.3+.
 
 To use it with [Scala CLI] use this directive:
 ```scala
@@ -89,7 +89,7 @@ object Hello extends IOApp.Simple:
 ```scala mdoc:reset:silent
 //> using toolkit typelevel:default
 //> using platform native
-//> using nativeVersion 0.4.15
+//> using nativeVersion 0.4.17
 
 import cats.effect._
 
