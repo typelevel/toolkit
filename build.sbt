@@ -7,7 +7,7 @@ ThisBuild / startYear := Some(2023)
 ThisBuild / tlSitePublishBranch := Some("main")
 ThisBuild / githubWorkflowJavaVersions := Seq(JavaSpec.temurin("17"))
 ThisBuild / mergifyStewardConfig ~= {
-  _.map(_.copy(author = "typelevel-steward[bot]"))
+  _.map(_.withAuthor("typelevel-steward[bot]"))
 }
 
 ThisBuild / crossScalaVersions := Seq("2.13.13", "3.3.3")
