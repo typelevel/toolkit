@@ -17,6 +17,9 @@ To get started, you can use the accompanying [template](https://github.com/typel
 scala-cli --power new typelevel/toolkit.g8
 ```
 
+> [!IMPORTANT]
+> The toolkit does not yet support Scala Native 0.5.x series.
+
 # Libraries included
 
 * [Cats] and [Cats Effect]
