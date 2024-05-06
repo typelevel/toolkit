@@ -4,6 +4,8 @@ A toolkit of **great libraries** to start building **Typelevel** apps on JVM, No
 
 Our very own flavour of the [Scala Toolkit].
 
+**IMPORTANT**: The toolkit does not yet support Scala Native 0.5.x series.
+
 ## Overview
 
 Typelevel toolkit is a meta library that currently includes these libraries:
