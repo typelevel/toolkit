@@ -25,7 +25,7 @@ import fs2.io.file.Files
 import fs2.io.process.ProcessBuilder
 import munit.Assertions.fail
 
-object ScalaCliProcess {
+object ScalaCliProcess extends PlatformSpecific {
 
   private val ClassPath: String = BuildInfo.classPath
   private val JavaHome: String = BuildInfo.javaHome
@@ -69,10 +69,9 @@ object ScalaCliProcess {
       .evalTap { path =>
         val header = List(
           s"//> using scala ${BuildInfo.scalaBinaryVersion}",
-          s"//> using toolkit typelevel:${BuildInfo.version}",
-          s"//> using platform ${BuildInfo.platform}"
-        ).mkString("", "\n", "\n")
-        Stream(header, scriptBody.stripMargin)
+          s"//> using toolkit typelevel:${BuildInfo.version}"
+        ) ::: platformSpecificDirectives
+        Stream(header.mkString("", "\n", "\n"), scriptBody.stripMargin)
           .through(Files[IO].writeUtf8(path))
           .compile
           .drain

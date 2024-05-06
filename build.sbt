@@ -91,7 +91,11 @@ lazy val tests = crossProject(JVMPlatform, JSPlatform, NativePlatform)
         toolkitTest.native / publishLocal
       )
       .value,
-    buildInfoKeys += "platform" -> "native"
+    buildInfoKeys ++= List(
+      "platform" -> "native",
+      // Remember to remove it once the whole stack is ported to SN 0.5.x
+      "nativeVersion" -> "0.4.17"
+    )
   )
   .enablePlugins(BuildInfoPlugin, NoPublishPlugin)
 
