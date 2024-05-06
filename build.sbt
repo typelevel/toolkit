@@ -56,6 +56,7 @@ lazy val tests = crossProject(JVMPlatform, JSPlatform, NativePlatform)
       "org.virtuslab.scala-cli" %% "cli" % "1.3.0" cross (CrossVersion.for2_13Use3)
     ),
     buildInfoKeys += scalaBinaryVersion,
+    buildInfoKeys += "nativeVersion" -> nativeVersion,
     buildInfoKeys += BuildInfoKey.map(Compile / dependencyClasspath) {
       case (_, v) =>
         "classPath" -> v.seq
@@ -91,11 +92,7 @@ lazy val tests = crossProject(JVMPlatform, JSPlatform, NativePlatform)
         toolkitTest.native / publishLocal
       )
       .value,
-    buildInfoKeys ++= List(
-      "platform" -> "native",
-      // Remember to remove it once the whole stack is ported to SN 0.5.x
-      "nativeVersion" -> "0.4.17"
-    )
+    buildInfoKeys += "platform" -> "native"
   )
   .enablePlugins(BuildInfoPlugin, NoPublishPlugin)
 
