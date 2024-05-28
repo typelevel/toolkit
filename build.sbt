@@ -20,7 +20,7 @@ lazy val toolkit = crossProject(JVMPlatform, JSPlatform, NativePlatform)
   .settings(
     name := "toolkit",
     libraryDependencies ++= Seq(
-      "org.typelevel" %%% "cats-core" % "2.10.0",
+      "org.typelevel" %%% "cats-core" % "2.11.0",
       "org.typelevel" %%% "cats-effect" % "3.5.4",
       "co.fs2" %%% "fs2-io" % "3.10.2",
       "org.gnieh" %%% "fs2-data-csv" % "1.11.0",
@@ -38,7 +38,7 @@ lazy val toolkitTest = crossProject(JVMPlatform, JSPlatform, NativePlatform)
   .settings(
     name := "toolkit-test",
     libraryDependencies ++= Seq(
-      "org.typelevel" %%% "cats-core" % "2.10.0",
+      "org.typelevel" %%% "cats-core" % "2.11.0",
       "org.typelevel" %%% "cats-effect-testkit" % "3.5.4",
       "org.scalameta" %%% "munit" % "1.0.0-RC1", // not % Test, on purpose :)
       "org.typelevel" %%% "munit-cats-effect" % "2.0.0-M5"
