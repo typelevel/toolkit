@@ -41,7 +41,7 @@ lazy val toolkitTest = crossProject(JVMPlatform, JSPlatform, NativePlatform)
       "org.typelevel" %%% "cats-core" % "2.10.0",
       "org.typelevel" %%% "cats-effect-testkit" % "3.5.4",
       "org.scalameta" %%% "munit" % "1.0.0", // not % Test, on purpose :)
-      "org.typelevel" %%% "munit-cats-effect" % "2.0.0-M5"
+      "org.typelevel" %%% "munit-cats-effect" % "2.0.0"
     ),
     mimaPreviousArtifacts := Set()
   )
@@ -51,7 +51,7 @@ lazy val tests = crossProject(JVMPlatform, JSPlatform, NativePlatform)
   .settings(
     name := "tests",
     libraryDependencies ++= Seq(
-      "org.typelevel" %%% "munit-cats-effect" % "2.0.0-M5" % Test,
+      "org.typelevel" %%% "munit-cats-effect" % "2.0.0" % Test,
       "co.fs2" %%% "fs2-io" % "3.10.2" % Test,
       "org.virtuslab.scala-cli" %% "cli" % "1.3.2" cross (CrossVersion.for2_13Use3)
     ),
