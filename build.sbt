@@ -50,10 +50,11 @@ lazy val tests = crossProject(JVMPlatform, JSPlatform, NativePlatform)
   .in(file("tests"))
   .settings(
     name := "tests",
+    resolvers += "oss-sonatype-org-snapshots" at "https://oss.sonatype.org/content/repositories/snapshots",
     libraryDependencies ++= Seq(
       "org.typelevel" %%% "munit-cats-effect" % "2.0.0" % Test,
       "co.fs2" %%% "fs2-io" % "3.10.2" % Test,
-      "org.virtuslab.scala-cli" %% "cli" % "1.4.0" cross (CrossVersion.for2_13Use3)
+      "org.virtuslab.scala-cli" %% "cli" % "1.4.3-9-g57d633514-SNAPSHOT" cross (CrossVersion.for2_13Use3)
     ),
     buildInfoKeys += scalaBinaryVersion,
     buildInfoKeys += "nativeVersion" -> nativeVersion,
