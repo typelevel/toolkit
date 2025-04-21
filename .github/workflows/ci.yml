@@ -22,6 +22,17 @@ jobs:
         with:
           fetch-depth: 0
 
+      
+      - name: Install dependencies
+        run: |
+            sudo apt-get update
+            sudo apt-get install libgc-dev libtinfo5 
+
+      - name: Install LLVM and Clang
+        uses: KyleMayes/install-llvm-action@v2
+        with:
+          version: 18.1.8
+
       - name: Show clang version
         run: clang --version
 
