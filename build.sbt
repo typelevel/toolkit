@@ -10,7 +10,7 @@ ThisBuild / mergifyStewardConfig ~= {
   _.map(_.withAuthor("typelevel-steward[bot]"))
 }
 
-ThisBuild / crossScalaVersions := Seq("2.13.16", "3.3.5")
+ThisBuild / crossScalaVersions := Seq("2.13.17", "3.3.5")
 
 lazy val root = tlCrossRootProject
   .aggregate(toolkit, toolkitTest, tests)
