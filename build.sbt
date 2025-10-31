@@ -25,9 +25,9 @@ lazy val toolkit = crossProject(JVMPlatform, JSPlatform, NativePlatform)
       "co.fs2" %%% "fs2-io" % "3.11.0",
       "org.gnieh" %%% "fs2-data-csv" % "1.11.3",
       "org.gnieh" %%% "fs2-data-csv-generic" % "1.11.3",
-      "org.http4s" %%% "http4s-ember-client" % "0.23.30",
+      "org.http4s" %%% "http4s-ember-client" % "0.23.33",
       "io.circe" %%% "circe-jawn" % "0.14.8",
-      "org.http4s" %%% "http4s-circe" % "0.23.30",
+      "org.http4s" %%% "http4s-circe" % "0.23.33",
       "com.monovore" %%% "decline-effect" % "2.4.1"
     ),
     mimaPreviousArtifacts := Set()
