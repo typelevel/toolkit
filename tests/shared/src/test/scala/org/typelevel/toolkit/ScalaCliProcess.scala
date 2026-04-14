@@ -40,7 +40,7 @@ object ScalaCliProcess {
         process.stdout.through(fs2.text.utf8.decode).compile.string,
         process.stderr.through(fs2.text.utf8.decode).compile.string
       ).parFlatMapN {
-        case (0, _, _) => IO.unit
+        case (0, _, _)                  => IO.unit
         case (exitCode, stdout, stdErr) =>
           val errorMessage: String = List(
             Option(stdout).filter(_.nonEmpty).map(s => s"[STDOUT]: $s"),
@@ -67,18 +67,11 @@ object ScalaCliProcess {
         None
       )
       .evalTap { path =>
-        val commonHeader = List(
+        val header = List(
           s"//> using scala ${BuildInfo.scalaBinaryVersion}",
           s"//> using toolkit typelevel:${BuildInfo.version}",
           s"//> using platform ${BuildInfo.platform}"
         )
-        val header = BuildInfo.platform match {
-          case "jvm" => commonHeader
-          case "js"  => commonHeader
-          case "native" =>
-            commonHeader :+
-              s"//> using nativeVersion ${BuildInfo.nativeVersion}"
-        }
         Stream(header.mkString("", "\n", "\n"), scriptBody.stripMargin)
           .through(Files[IO].writeUtf8(path))
           .compile

@@ -10,7 +10,7 @@ ThisBuild / mergifyStewardConfig ~= {
   _.map(_.withAuthor("typelevel-steward[bot]"))
 }
 
-ThisBuild / crossScalaVersions := Seq("2.13.16", "3.3.5")
+ThisBuild / crossScalaVersions := Seq("2.13.18", "3.3.7")
 
 lazy val root = tlCrossRootProject
   .aggregate(toolkit, toolkitTest, tests)
@@ -20,15 +20,15 @@ lazy val toolkit = crossProject(JVMPlatform, JSPlatform, NativePlatform)
   .settings(
     name := "toolkit",
     libraryDependencies ++= Seq(
-      "org.typelevel" %%% "cats-core" % "2.11.0",
-      "org.typelevel" %%% "cats-effect" % "3.6.1",
-      "co.fs2" %%% "fs2-io" % "3.11.0",
-      "org.gnieh" %%% "fs2-data-csv" % "1.11.3",
-      "org.gnieh" %%% "fs2-data-csv-generic" % "1.11.3",
-      "org.http4s" %%% "http4s-ember-client" % "0.23.30",
-      "io.circe" %%% "circe-jawn" % "0.14.8",
-      "org.http4s" %%% "http4s-circe" % "0.23.30",
-      "com.monovore" %%% "decline-effect" % "2.4.1"
+      "org.typelevel" %%% "cats-core" % "2.13.0",
+      "org.typelevel" %%% "cats-effect" % "3.7.0",
+      "co.fs2" %%% "fs2-io" % "3.13.0",
+      "org.gnieh" %%% "fs2-data-csv" % "1.13.0",
+      "org.gnieh" %%% "fs2-data-csv-generic" % "1.13.0",
+      "org.http4s" %%% "http4s-ember-client" % "0.23.34",
+      "io.circe" %%% "circe-jawn" % "0.14.14",
+      "org.http4s" %%% "http4s-circe" % "0.23.34",
+      "com.monovore" %%% "decline-effect" % "2.6.2"
     ),
     mimaPreviousArtifacts := Set()
   )
@@ -38,10 +38,10 @@ lazy val toolkitTest = crossProject(JVMPlatform, JSPlatform, NativePlatform)
   .settings(
     name := "toolkit-test",
     libraryDependencies ++= Seq(
-      "org.typelevel" %%% "cats-core" % "2.11.0",
-      "org.typelevel" %%% "cats-effect-testkit" % "3.6.1",
-      "org.scalameta" %%% "munit" % "1.0.0", // not % Test, on purpose :)
-      "org.typelevel" %%% "munit-cats-effect" % "2.0.0"
+      "org.typelevel" %%% "cats-core" % "2.13.0",
+      "org.typelevel" %%% "cats-effect-testkit" % "3.7.0",
+      "org.scalameta" %%% "munit" % "1.3.0", // not % Test, on purpose :)
+      "org.typelevel" %%% "munit-cats-effect" % "2.2.0"
     ),
     mimaPreviousArtifacts := Set()
   )
@@ -51,12 +51,11 @@ lazy val tests = crossProject(JVMPlatform, JSPlatform, NativePlatform)
   .settings(
     name := "tests",
     libraryDependencies ++= Seq(
-      "org.typelevel" %%% "munit-cats-effect" % "2.0.0" % Test,
-      "co.fs2" %%% "fs2-io" % "3.11.0" % Test,
-      "org.virtuslab.scala-cli" %% "cli" % "1.5.4" cross (CrossVersion.for2_13Use3)
+      "org.typelevel" %%% "munit-cats-effect" % "2.2.0" % Test,
+      "co.fs2" %%% "fs2-io" % "3.13.0" % Test,
+      "org.virtuslab.scala-cli" %% "cli" % "1.12.5" cross (CrossVersion.for2_13Use3)
     ),
     buildInfoKeys += scalaBinaryVersion,
-    buildInfoKeys += "nativeVersion" -> nativeVersion,
     buildInfoKeys += BuildInfoKey.map(Compile / dependencyClasspath) {
       case (_, v) =>
         "classPath" -> v.seq
