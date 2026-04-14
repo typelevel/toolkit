@@ -40,8 +40,7 @@ lazy val toolkitTest = crossProject(JVMPlatform, JSPlatform, NativePlatform)
     libraryDependencies ++= Seq(
       "org.typelevel" %%% "cats-core" % "2.11.0",
       "org.typelevel" %%% "cats-effect-testkit" % "3.6.1",
-      "org.scalameta" %%% "munit" % "1.0.0", // not % Test, on purpose :)
-      "org.typelevel" %%% "munit-cats-effect" % "2.0.0"
+      "org.typelevel" %%% "weaver-cats" % "0.11.3", // not % Test, on purpose :)
     ),
     mimaPreviousArtifacts := Set()
   )
@@ -51,7 +50,7 @@ lazy val tests = crossProject(JVMPlatform, JSPlatform, NativePlatform)
   .settings(
     name := "tests",
     libraryDependencies ++= Seq(
-      "org.typelevel" %%% "munit-cats-effect" % "2.0.0" % Test,
+      "org.typelevel" %%% "weaver-cats" % "0.11.3" % Test,
       "co.fs2" %%% "fs2-io" % "3.11.0" % Test,
       "org.virtuslab.scala-cli" %% "cli" % "1.5.4" cross (CrossVersion.for2_13Use3)
     ),
@@ -117,8 +116,8 @@ lazy val docs = project
               "Cats Effect"
             ),
             TextLink.external(
-              "https://github.com/typelevel/munit-cats-effect",
-              "Munit Cats Effect"
+              "https://github.com/typelevel/weaver-test",
+              "Weaver Test"
             )
           )
         )
