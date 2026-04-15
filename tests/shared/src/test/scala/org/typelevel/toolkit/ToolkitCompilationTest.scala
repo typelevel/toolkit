@@ -27,7 +27,7 @@ object ToolkitCompilationTest extends SimpleIOSuite {
   // each (scalaVersion, platform) will have to download the compiler
   // (if it's not the default), compile (that for native takes awhile)
   // and then finally run the code.
-  private val TestTimeout: Duration = 2.minute
+  private val TestTimeout = 2.minute
 
   testRun("Toolkit should run a simple Hello Cats Effect") {
     if (scala3)
