@@ -100,7 +100,7 @@ lazy val docs = project
   .enablePlugins(TypelevelSitePlugin)
   .dependsOn(toolkit.jvm)
   .settings(
-    scalaVersion := "3.3.7",
+    scalaVersion := "3.3.5",
     tlSiteHelium ~= {
       _.site.mainNavigation(
         appendLinks = List(

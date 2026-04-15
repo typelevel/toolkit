@@ -71,14 +71,14 @@ object Hello extends IOApp.Simple {
 
 ### Scala Native usage
 
-Since the native flavour of most of the **Typelevel libraries** is, at the moment, built against Scala Native 0.4.15, when using [Scala CLI] you have to declare the Scala native's version, i.e.
+Since the native flavour of most of the **Typelevel libraries** is, at the moment, built against Scala Native 0.5.11, when using [Scala CLI] you have to declare the Scala native's version, i.e.
 
 @:select(scala-version)
 @:choice(scala-3)
 ```scala mdoc:reset:silent
 //> using toolkit typelevel:default
 //> using platform native
-//> using nativeVersion 0.4.15
+//> using nativeVersion 0.5.11
 
 import cats.effect.*
 
@@ -89,7 +89,7 @@ object Hello extends IOApp.Simple:
 ```scala mdoc:reset:silent
 //> using toolkit typelevel:default
 //> using platform native
-//> using nativeVersion 0.4.17
+//> using nativeVersion 0.5.11
 
 import cats.effect._
 
