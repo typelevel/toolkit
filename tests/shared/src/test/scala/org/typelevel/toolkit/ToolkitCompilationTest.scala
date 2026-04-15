@@ -28,6 +28,9 @@ object ToolkitCompilationTest extends SimpleIOSuite {
   // (if it's not the default), compile (that for native takes awhile)
   // and then finally run the code.
   private val TestTimeout = 4.minutes
+  
+  // This helps improve times on Native, more investigation is needed to understand why.
+  override val maxParallelism = 1
 
   testRun("Toolkit should run a simple Hello Cats Effect") {
     if (scala3)
