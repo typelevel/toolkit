@@ -2,7 +2,7 @@
 
 A toolkit of great libraries to get started building Typelevel apps on JVM, Node.js, and Native! Our very own flavour of the [Scala Toolkit].
 
-```scala
+```scala 3
 //> using toolkit typelevel:default
 
 import cats.effect.*
@@ -28,7 +28,7 @@ scala-cli --power new typelevel/toolkit.g8
 * [http4s Ember client]
 * [Circe] and http4s integration
 * [Decline Effect]
-* [Munit Cats Effect]
+* [Weaver Test]
 
 [Scala Toolkit]: https://docs.scala-lang.org/toolkit/introduction.html
 [Cats]: https://typelevel.org/cats
@@ -39,4 +39,4 @@ scala-cli --power new typelevel/toolkit.g8
 [http4s Ember Client]: https://http4s.org/v0.23/docs/client.html
 [Circe]: https://circe.github.io/circe/
 [Decline Effect]: https://ben.kirw.in/decline/effect.html
-[Munit Cats Effect]: https://github.com/typelevel/munit-cats-effect
+[Weaver Test]: https://github.com/typelevel/weaver-test 
