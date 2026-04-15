@@ -43,7 +43,7 @@ object ScalaCliProcess {
         process.stdout.through(fs2.text.utf8.decode).compile.string,
         process.stderr.through(fs2.text.utf8.decode).compile.string
       ).parFlatMapN {
-        case (0, _, _) => IO.pure(success)
+        case (0, _, _)                  => IO.pure(success)
         case (exitCode, stdout, stdErr) =>
           val errorMessage: String = List(
             Option(stdout).filter(_.nonEmpty).map(s => s"[STDOUT]: $s"),
