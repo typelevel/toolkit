@@ -56,7 +56,6 @@ lazy val tests = crossProject(JVMPlatform, JSPlatform, NativePlatform)
     ),
     buildInfoKeys += scalaBinaryVersion,
     buildInfoKeys += scalaVersion,
-    buildInfoKeys += "nativeVersion" -> nativeVersion,
     buildInfoKeys += BuildInfoKey.map(Compile / dependencyClasspath) {
       case (_, v) =>
         "classPath" -> v.seq
@@ -76,13 +75,15 @@ lazy val tests = crossProject(JVMPlatform, JSPlatform, NativePlatform)
     Test / test := (Test / test)
       .dependsOn(toolkit.jvm / publishLocal, toolkitTest.jvm / publishLocal)
       .value,
-    buildInfoKeys += "platform" -> "jvm"
+    buildInfoKeys += "platform" -> "jvm",
+    buildInfoKeys += "platformVersion" -> ""
   )
   .jsSettings(
     Test / test := (Test / test)
       .dependsOn(toolkit.js / publishLocal, toolkitTest.js / publishLocal)
       .value,
     buildInfoKeys += "platform" -> "js",
+    buildInfoKeys += "platformVersion" -> scalaJSVersion,
     scalaJSLinkerConfig ~= { _.withModuleKind(ModuleKind.CommonJSModule) }
   )
   .nativeSettings(
@@ -92,7 +93,8 @@ lazy val tests = crossProject(JVMPlatform, JSPlatform, NativePlatform)
         toolkitTest.native / publishLocal
       )
       .value,
-    buildInfoKeys += "platform" -> "native"
+    buildInfoKeys += "platform" -> "native",
+    buildInfoKeys += "platformVersion" -> nativeVersion
   )
   .enablePlugins(BuildInfoPlugin, NoPublishPlugin)
 
