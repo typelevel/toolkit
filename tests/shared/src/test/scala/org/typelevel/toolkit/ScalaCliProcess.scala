@@ -89,7 +89,9 @@ object ScalaCliProcess {
       }
       .map(_.toString)
 
-  def command(args: List[String])(implicit loc: SourceLocation): IO[Expectations] = scalaCli(args)
+  def command(args: List[String])(implicit
+      loc: SourceLocation
+  ): IO[Expectations] = scalaCli(args)
 
   def run(body: String)(implicit loc: SourceLocation): IO[Expectations] =
     writeToFile(body)(false).use(f => scalaCli("run" :: f :: Nil))
