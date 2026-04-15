@@ -40,7 +40,7 @@ lazy val toolkitTest = crossProject(JVMPlatform, JSPlatform, NativePlatform)
     libraryDependencies ++= Seq(
       "org.typelevel" %%% "cats-core" % "2.13.0",
       "org.typelevel" %%% "cats-effect-testkit" % "3.7.0",
-      "org.typelevel" %%% "weaver-cats" % "0.11.3" // not % Test, on purpose :)
+      "org.typelevel" %%% "weaver-cats" % "0.12.0" // not % Test, on purpose :)
     ),
     libraryDependencySchemes += "org.scala-native" %% "test-interface_native0.5" % VersionScheme.Always,
     mimaPreviousArtifacts := Set()
@@ -51,7 +51,7 @@ lazy val tests = crossProject(JVMPlatform, JSPlatform, NativePlatform)
   .settings(
     name := "tests",
     libraryDependencies ++= Seq(
-      "org.typelevel" %%% "weaver-cats" % "0.11.3" % Test,
+      "org.typelevel" %%% "weaver-cats" % "0.12.0" % Test,
       "co.fs2" %%% "fs2-io" % "3.13.0" % Test,
       "org.virtuslab.scala-cli" %% "cli" % "1.13.0" cross (CrossVersion.for2_13Use3)
     ),
@@ -100,7 +100,7 @@ lazy val docs = project
   .enablePlugins(TypelevelSitePlugin)
   .dependsOn(toolkit.jvm)
   .settings(
-    scalaVersion := "3.3.5",
+    scalaVersion := "3.3.7",
     tlSiteHelium ~= {
       _.site.mainNavigation(
         appendLinks = List(
