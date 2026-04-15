@@ -10,7 +10,7 @@ ThisBuild / mergifyStewardConfig ~= {
   _.map(_.withAuthor("typelevel-steward[bot]"))
 }
 
-ThisBuild / crossScalaVersions := Seq("2.13.18", "3.3.5")
+ThisBuild / crossScalaVersions := Seq("2.13.18", "3.3.7")
 
 lazy val root = tlCrossRootProject
   .aggregate(toolkit, toolkitTest, tests)
@@ -20,15 +20,15 @@ lazy val toolkit = crossProject(JVMPlatform, JSPlatform, NativePlatform)
   .settings(
     name := "toolkit",
     libraryDependencies ++= Seq(
-      "org.typelevel" %%% "cats-core" % "2.11.0",
-      "org.typelevel" %%% "cats-effect" % "3.6.1",
-      "co.fs2" %%% "fs2-io" % "3.11.0",
-      "org.gnieh" %%% "fs2-data-csv" % "1.11.3",
-      "org.gnieh" %%% "fs2-data-csv-generic" % "1.11.3",
-      "org.http4s" %%% "http4s-ember-client" % "0.23.30",
-      "io.circe" %%% "circe-jawn" % "0.14.8",
-      "org.http4s" %%% "http4s-circe" % "0.23.30",
-      "com.monovore" %%% "decline-effect" % "2.4.1"
+      "org.typelevel" %%% "cats-core" % "2.13.0",
+      "org.typelevel" %%% "cats-effect" % "3.7.0",
+      "co.fs2" %%% "fs2-io" % "3.13.0",
+      "org.gnieh" %%% "fs2-data-csv" % "1.13.0",
+      "org.gnieh" %%% "fs2-data-csv-generic" % "1.13.0",
+      "org.http4s" %%% "http4s-ember-client" % "0.23.34",
+      "io.circe" %%% "circe-jawn" % "0.14.14",
+      "org.http4s" %%% "http4s-circe" % "0.23.34",
+      "com.monovore" %%% "decline-effect" % "2.6.2"
     ),
     mimaPreviousArtifacts := Set()
   )
@@ -38,10 +38,11 @@ lazy val toolkitTest = crossProject(JVMPlatform, JSPlatform, NativePlatform)
   .settings(
     name := "toolkit-test",
     libraryDependencies ++= Seq(
-      "org.typelevel" %%% "cats-core" % "2.11.0",
-      "org.typelevel" %%% "cats-effect-testkit" % "3.6.1",
+      "org.typelevel" %%% "cats-core" % "2.13.0",
+      "org.typelevel" %%% "cats-effect-testkit" % "3.7.0",
       "org.typelevel" %%% "weaver-cats" % "0.11.3" // not % Test, on purpose :)
     ),
+    libraryDependencySchemes += "org.scala-native" %% "test-interface_native0.5" % VersionScheme.Always,
     mimaPreviousArtifacts := Set()
   )
 
@@ -51,11 +52,10 @@ lazy val tests = crossProject(JVMPlatform, JSPlatform, NativePlatform)
     name := "tests",
     libraryDependencies ++= Seq(
       "org.typelevel" %%% "weaver-cats" % "0.11.3" % Test,
-      "co.fs2" %%% "fs2-io" % "3.11.0" % Test,
-      "org.virtuslab.scala-cli" %% "cli" % "1.12.5" cross (CrossVersion.for2_13Use3)
+      "co.fs2" %%% "fs2-io" % "3.13.0" % Test,
+      "org.virtuslab.scala-cli" %% "cli" % "1.13.0" cross (CrossVersion.for2_13Use3)
     ),
     buildInfoKeys += scalaBinaryVersion,
-    buildInfoKeys += scalaVersion,
     buildInfoKeys += BuildInfoKey.map(Compile / dependencyClasspath) {
       case (_, v) =>
         "classPath" -> v.seq
@@ -75,15 +75,13 @@ lazy val tests = crossProject(JVMPlatform, JSPlatform, NativePlatform)
     Test / test := (Test / test)
       .dependsOn(toolkit.jvm / publishLocal, toolkitTest.jvm / publishLocal)
       .value,
-    buildInfoKeys += "platform" -> "jvm",
-    buildInfoKeys += "platformVersion" -> ""
+    buildInfoKeys += "platform" -> "jvm"
   )
   .jsSettings(
     Test / test := (Test / test)
       .dependsOn(toolkit.js / publishLocal, toolkitTest.js / publishLocal)
       .value,
     buildInfoKeys += "platform" -> "js",
-    buildInfoKeys += "platformVersion" -> scalaJSVersion,
     scalaJSLinkerConfig ~= { _.withModuleKind(ModuleKind.CommonJSModule) }
   )
   .nativeSettings(
@@ -93,8 +91,7 @@ lazy val tests = crossProject(JVMPlatform, JSPlatform, NativePlatform)
         toolkitTest.native / publishLocal
       )
       .value,
-    buildInfoKeys += "platform" -> "native",
-    buildInfoKeys += "platformVersion" -> nativeVersion
+    buildInfoKeys += "platform" -> "native"
   )
   .enablePlugins(BuildInfoPlugin, NoPublishPlugin)
 

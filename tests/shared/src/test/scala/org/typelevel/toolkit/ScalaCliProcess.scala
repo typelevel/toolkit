@@ -70,20 +70,11 @@ object ScalaCliProcess {
         None
       )
       .evalTap { path =>
-        val commonHeader = List(
-          s"//> using scala ${BuildInfo.scalaVersion}",
+        val header = List(
+          s"//> using scala ${BuildInfo.scalaBinaryVersion}",
           s"//> using toolkit typelevel:${BuildInfo.version}",
           s"//> using platform ${BuildInfo.platform}"
         )
-        val header = BuildInfo.platform match {
-          case "jvm" => commonHeader
-          case "js" =>
-            commonHeader :+
-              s"//> using jsVersion ${BuildInfo.platformVersion}"
-          case "native" =>
-            commonHeader :+
-              s"//> using nativeVersion ${BuildInfo.platformVersion}"
-        }
         Stream(header.mkString("", "\n", "\n"), scriptBody.stripMargin)
           .through(Files[IO].writeUtf8(path))
           .compile
