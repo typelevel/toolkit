@@ -108,8 +108,7 @@
   <ul class="nav-list">
     <li class="level1 nav-leaf"><a href="#overview">Overview</a></li>
     <li class="level1 nav-leaf"><a href="#quick-start">Quick Start</a></li>
-    <li class="level1 nav-node"><a href="#example">Example</a></li>
-    <li class="level2 nav-leaf"><a href="#scala-native-usage">Scala Native usage</a></li>
+    <li class="level1 nav-leaf"><a href="#example">Example</a></li>
     <li class="level1 nav-leaf"><a href="#native-image">Native Image</a></li>
   </ul>
 
@@ -169,36 +168,6 @@
           </div>
           <div class="tab-content" data-choice-name="scala-2">
             <pre class="keep-together pdf epub"><code class="nohighlight"><span class="comment">//&gt; using toolkit typelevel:default
-</span><span>
-</span><span class="keyword">import</span><span> </span><span class="identifier">cats</span><span>.</span><span class="identifier">effect</span><span>.</span><span class="identifier">_</span><span>
-
-</span><span class="keyword">object</span><span> </span><span class="type-name">Hello</span><span> </span><span class="keyword">extends</span><span> </span><span class="type-name">IOApp</span><span>.</span><span class="type-name">Simple</span><span> {
-  </span><span class="keyword">def</span><span> </span><span class="declaration-name">run</span><span> = </span><span class="type-name">IO</span><span>.</span><span class="identifier">println</span><span>(</span><span class="string-literal">&quot;Hello toolkit!&quot;</span><span>)
-}</span></code></pre>
-          </div>
-        </div>
-        
-        <h3 id="scala-native-usage" class="section"><a class="anchor-link left" href="#scala-native-usage"><i class="icofont-laika link">&#xef71;</i></a>Scala Native usage</h3>
-        <p>Since the native flavour of most of the <strong>Typelevel libraries</strong> is, at the moment, built against Scala Native 0.4.15, when using <a href="https://scala-cli.virtuslab.org">Scala CLI</a> you have to declare the Scala native&#39;s version, i.e.</p>
-        <div class="tab-container" data-tab-group="scala-version">
-          <ul class="tab-group">
-            <li class="tab active" data-choice-name="scala-3"><a href="#">Scala 3</a></li>
-            <li class="tab" data-choice-name="scala-2"><a href="#">Scala 2</a></li>
-          </ul>
-          <div class="tab-content active" data-choice-name="scala-3">
-            <pre class="keep-together pdf epub"><code class="nohighlight"><span class="comment">//&gt; using toolkit typelevel:default
-//&gt; using platform native
-//&gt; using nativeVersion 0.4.15
-</span><span>
-</span><span class="keyword">import</span><span> </span><span class="identifier">cats</span><span>.</span><span class="identifier">effect</span><span>.*
-
-</span><span class="keyword">object</span><span> </span><span class="type-name">Hello</span><span> </span><span class="keyword">extends</span><span> </span><span class="type-name">IOApp</span><span>.</span><span class="type-name">Simple</span><span>:
-  </span><span class="keyword">def</span><span> </span><span class="declaration-name">run</span><span> = </span><span class="type-name">IO</span><span>.</span><span class="identifier">println</span><span>(</span><span class="string-literal">&quot;Hello toolkit!&quot;</span><span>)</span></code></pre>
-          </div>
-          <div class="tab-content" data-choice-name="scala-2">
-            <pre class="keep-together pdf epub"><code class="nohighlight"><span class="comment">//&gt; using toolkit typelevel:default
-//&gt; using platform native
-//&gt; using nativeVersion 0.4.17
 </span><span>
 </span><span class="keyword">import</span><span> </span><span class="identifier">cats</span><span>.</span><span class="identifier">effect</span><span>.</span><span class="identifier">_</span><span>
 
