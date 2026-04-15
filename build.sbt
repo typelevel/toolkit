@@ -43,6 +43,7 @@ lazy val toolkitTest = crossProject(JVMPlatform, JSPlatform, NativePlatform)
       "org.scalameta" %%% "munit" % "1.3.0", // not % Test, on purpose :)
       "org.typelevel" %%% "munit-cats-effect" % "2.2.0"
     ),
+    libraryDependencySchemes += "org.scala-native" %% "test-interface_native0.5" % VersionScheme.Always,
     mimaPreviousArtifacts := Set()
   )
 
