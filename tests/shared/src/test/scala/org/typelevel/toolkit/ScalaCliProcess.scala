@@ -18,19 +18,22 @@ package org.typelevel.toolkit
 
 import cats.effect.kernel.Resource
 import cats.effect.IO
-import cats.syntax.parallel._
+import cats.syntax.parallel.*
 import buildinfo.BuildInfo
 import fs2.Stream
 import fs2.io.file.Files
 import fs2.io.process.ProcessBuilder
-import munit.Assertions.fail
+import weaver.{Expectations, SourceLocation}
+import weaver.Expectations.Helpers.{failure, success}
 
 object ScalaCliProcess {
 
   private val ClassPath: String = BuildInfo.classPath
   private val JavaHome: String = BuildInfo.javaHome
 
-  private def scalaCli(args: List[String]): IO[Unit] = ProcessBuilder(
+  private def scalaCli(args: List[String])(implicit
+      loc: SourceLocation
+  ): IO[Expectations] = ProcessBuilder(
     s"$JavaHome/bin/java",
     args.prependedAll(List("-cp", ClassPath, "scala.cli.ScalaCli"))
   ).spawn[IO]
@@ -40,7 +43,7 @@ object ScalaCliProcess {
         process.stdout.through(fs2.text.utf8.decode).compile.string,
         process.stderr.through(fs2.text.utf8.decode).compile.string
       ).parFlatMapN {
-        case (0, _, _) => IO.unit
+        case (0, _, _) => IO.pure(success)
         case (exitCode, stdout, stdErr) =>
           val errorMessage: String = List(
             Option(stdout).filter(_.nonEmpty).map(s => s"[STDOUT]: $s"),
@@ -52,7 +55,7 @@ object ScalaCliProcess {
             case (summary, None)      => summary
           }
 
-          IO.delay(fail(errorMessage))
+          IO.pure(failure(errorMessage))
       }
     )
 
@@ -68,7 +71,7 @@ object ScalaCliProcess {
       )
       .evalTap { path =>
         val commonHeader = List(
-          s"//> using scala ${BuildInfo.scalaBinaryVersion}",
+          s"//> using scala ${BuildInfo.scalaVersion}",
           s"//> using toolkit typelevel:${BuildInfo.version}",
           s"//> using platform ${BuildInfo.platform}"
         )
@@ -86,12 +89,11 @@ object ScalaCliProcess {
       }
       .map(_.toString)
 
-  def command(args: List[String]): IO[Unit] = scalaCli(args)
+  def command(args: List[String])(implicit loc: SourceLocation): IO[Expectations] = scalaCli(args)
 
-  def run(body: String): IO[Unit] =
+  def run(body: String)(implicit loc: SourceLocation): IO[Expectations] =
     writeToFile(body)(false).use(f => scalaCli("run" :: f :: Nil))
 
-  def test(body: String): IO[Unit] =
+  def test(body: String)(implicit loc: SourceLocation): IO[Expectations] =
     writeToFile(body)(true).use(f => scalaCli("test" :: f :: Nil))
-
 }
