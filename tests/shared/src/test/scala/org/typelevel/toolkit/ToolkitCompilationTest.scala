@@ -16,17 +16,18 @@
 
 package org.typelevel.toolkit
 
-import munit.{CatsEffectSuite, TestOptions}
+import cats.effect.IO
 import buildinfo.BuildInfo.scala3
-import scala.concurrent.duration._
+import weaver.*
+import scala.concurrent.duration.*
 
-class ToolkitCompilationTest extends CatsEffectSuite {
+object ToolkitCompilationTest extends SimpleIOSuite {
 
   // 2 minutes may seem a lot, but consider that the first test for
   // each (scalaVersion, platform) will have to download the compiler
   // (if it's not the default), compile (that for native takes awhile)
   // and then finally run the code.
-  override def munitIOTimeout: Duration = 2.minute
+  private val TestTimeout: Duration = 2.minute
 
   testRun("Toolkit should run a simple Hello Cats Effect") {
     if (scala3)
@@ -67,26 +68,36 @@ class ToolkitCompilationTest extends CatsEffectSuite {
          |}"""
   }
 
-  testTest("Toolkit should execute a simple munit suite") {
+  testTest("Toolkit should execute a simple weaver suite") {
     if (scala3)
-      """|import cats.effect.*
-         |import munit.*
+      """|import cats.effect.IO
+         |import weaver.*
          |
-         |class Test extends CatsEffectSuite:
-         |  test("test")(IO.unit)"""
+         |object Test extends SimpleIOSuite:
+         |  test("test")(IO.pure(success))"""
     else
-      """|import cats.effect._
-         |import munit._
+      """|import cats.effect.IO
+         |import weaver._
          |
-         |class Test extends CatsEffectSuite {
-         |  test("test")(IO.unit)
+         |object Test extends SimpleIOSuite {
+         |  test("test")(IO.pure(success))
          |}"""
   }
 
-  def testRun(testName: TestOptions)(scriptBody: String): Unit =
-    test(testName)(ScalaCliProcess.run(scriptBody))
+  private def withTimeout(test: IO[Expectations]): IO[Expectations] =
+    test.timeoutTo(
+      TestTimeout,
+      IO.pure(failure(s"Test exceeded timeout of $TestTimeout"))
+    )
 
-  def testTest(testName: TestOptions)(scriptBody: String): Unit =
-    test(testName)(ScalaCliProcess.test(scriptBody))
+  def testRun(testName: String)(scriptBody: String): Unit =
+    test(testName) {
+      withTimeout(ScalaCliProcess.run(scriptBody))
+    }
+
+  def testTest(testName: String)(scriptBody: String): Unit =
+    test(testName) {
+      withTimeout(ScalaCliProcess.test(scriptBody))
+    }
 
 }
