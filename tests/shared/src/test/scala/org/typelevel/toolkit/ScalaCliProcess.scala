@@ -71,7 +71,7 @@ object ScalaCliProcess {
       )
       .evalTap { path =>
         val commonHeader = List(
-          s"//> using scala ${BuildInfo.scalaBinaryVersion}",
+          s"//> using scala ${BuildInfo.scalaVersion}",
           s"//> using toolkit typelevel:${BuildInfo.version}",
           s"//> using platform ${BuildInfo.platform}"
         )

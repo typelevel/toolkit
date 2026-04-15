@@ -55,6 +55,7 @@ lazy val tests = crossProject(JVMPlatform, JSPlatform, NativePlatform)
       "org.virtuslab.scala-cli" %% "cli" % "1.5.4" cross (CrossVersion.for2_13Use3)
     ),
     buildInfoKeys += scalaBinaryVersion,
+    buildInfoKeys += scalaVersion,
     buildInfoKeys += "nativeVersion" -> nativeVersion,
     buildInfoKeys += BuildInfoKey.map(Compile / dependencyClasspath) {
       case (_, v) =>
