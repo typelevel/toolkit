@@ -40,7 +40,7 @@ lazy val toolkitTest = crossProject(JVMPlatform, JSPlatform, NativePlatform)
     libraryDependencies ++= Seq(
       "org.typelevel" %%% "cats-core" % "2.11.0",
       "org.typelevel" %%% "cats-effect-testkit" % "3.6.1",
-      "org.typelevel" %%% "weaver-cats" % "0.11.3", // not % Test, on purpose :)
+      "org.typelevel" %%% "weaver-cats" % "0.11.3" // not % Test, on purpose :)
     ),
     mimaPreviousArtifacts := Set()
   )
