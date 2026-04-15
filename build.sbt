@@ -2,7 +2,7 @@ import laika.helium.config._
 import laika.config.{ChoiceConfig, Selections, SelectionConfig}
 import java.io.File
 
-ThisBuild / tlBaseVersion := "0.1"
+ThisBuild / tlBaseVersion := "0.2"
 ThisBuild / startYear := Some(2023)
 ThisBuild / tlSitePublishBranch := Some("main")
 ThisBuild / githubWorkflowJavaVersions := Seq(JavaSpec.temurin("17"))
