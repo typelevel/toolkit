@@ -29,7 +29,7 @@ object ToolkitCompilationTest extends SimpleIOSuite {
   // and then finally run the code.
   private val TestTimeout = 4.minutes
 
-  // This helps improve times on Native, more investigation is needed to understand why.
+  // We can disable parallelism for this suite, since it is CPU-bound anyway.
   override val maxParallelism = 1
 
   testRun("Toolkit should run a simple Hello Cats Effect") {
