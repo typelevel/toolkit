@@ -2,7 +2,7 @@ import laika.helium.config._
 import laika.config.{ChoiceConfig, Selections, SelectionConfig}
 import java.io.File
 
-ThisBuild / tlBaseVersion := "0.1"
+ThisBuild / tlBaseVersion := "0.2"
 ThisBuild / startYear := Some(2023)
 ThisBuild / tlSitePublishBranch := Some("main")
 ThisBuild / githubWorkflowJavaVersions := Seq(JavaSpec.temurin("17"))
@@ -40,8 +40,7 @@ lazy val toolkitTest = crossProject(JVMPlatform, JSPlatform, NativePlatform)
     libraryDependencies ++= Seq(
       "org.typelevel" %%% "cats-core" % "2.13.0",
       "org.typelevel" %%% "cats-effect-testkit" % "3.7.0",
-      "org.scalameta" %%% "munit" % "1.3.0", // not % Test, on purpose :)
-      "org.typelevel" %%% "munit-cats-effect" % "2.2.0"
+      "org.typelevel" %%% "weaver-cats" % "0.12.0" // not % Test, on purpose :)
     ),
     libraryDependencySchemes += "org.scala-native" %% "test-interface_native0.5" % VersionScheme.Always,
     mimaPreviousArtifacts := Set()
@@ -52,7 +51,7 @@ lazy val tests = crossProject(JVMPlatform, JSPlatform, NativePlatform)
   .settings(
     name := "tests",
     libraryDependencies ++= Seq(
-      "org.typelevel" %%% "munit-cats-effect" % "2.2.0" % Test,
+      "org.typelevel" %%% "weaver-cats" % "0.12.0" % Test,
       "co.fs2" %%% "fs2-io" % "3.13.0" % Test,
       "org.virtuslab.scala-cli" %% "cli" % "1.13.0" cross (CrossVersion.for2_13Use3)
     ),
@@ -117,8 +116,8 @@ lazy val docs = project
               "Cats Effect"
             ),
             TextLink.external(
-              "https://github.com/typelevel/munit-cats-effect",
-              "Munit Cats Effect"
+              "https://github.com/typelevel/weaver-test",
+              "Weaver Test"
             )
           )
         )

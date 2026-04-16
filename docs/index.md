@@ -14,7 +14,7 @@ Typelevel toolkit is a meta library that currently includes these libraries:
 - [Http4s Ember client]
 - [Circe] and http4s integration
 - [Decline Effect]
-- [Munit Cats Effect]
+- [Weaver Test]
 
 and it's published for Scala 2.13 and 3.3+.
 
@@ -85,7 +85,7 @@ Enumerations in your codebase, see [this comment] for more info.
 [Http4s Ember Client]: https://http4s.org/v0.23/docs/client.html
 [Circe]: https://circe.github.io/circe/
 [Decline Effect]: https://ben.kirw.in/decline/effect.html
-[Munit Cats Effect]: https://github.com/typelevel/munit-cats-effect
+[Weaver Test]: https://github.com/typelevel/weaver-test
 
 [this Enumeration method]: https://github.com/scala/scala/blob/v2.13.8/src/library/scala/Enumeration.scala#L190-L215=
 [this comment]: https://github.com/typelevel/cats-effect/issues/3051#issuecomment-1167026949
