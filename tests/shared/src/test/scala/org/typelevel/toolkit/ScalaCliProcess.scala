@@ -42,8 +42,8 @@ object ScalaCliProcess {
         process.exitValue,
         process.stdout.through(fs2.text.utf8.decode).compile.string,
         process.stderr.through(fs2.text.utf8.decode).compile.string
-      ).parFlatMapN {
-        case (0, _, _)                  => IO.pure(success)
+      ).parMapN {
+        case (0, _, _)                  => success
         case (exitCode, stdout, stdErr) =>
           val errorMessage: String = List(
             Option(stdout).filter(_.nonEmpty).map(s => s"[STDOUT]: $s"),
@@ -55,7 +55,7 @@ object ScalaCliProcess {
             case (summary, None)      => summary
           }
 
-          IO.pure(failure(errorMessage))
+          failure(errorMessage)
       }
     )
 
