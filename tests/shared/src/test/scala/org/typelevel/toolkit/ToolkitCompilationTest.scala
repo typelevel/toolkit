@@ -23,12 +23,12 @@ import scala.concurrent.duration.*
 
 object ToolkitCompilationTest extends SimpleIOSuite {
 
-  // 2 minutes may seem a lot, but consider that the first test for
+  // 4 minutes may seem a lot, but consider that the first test for
   // each (scalaVersion, platform) will have to download the compiler
   // (if it's not the default), compile (that for native takes awhile)
   // and then finally run the code.
   private val TestTimeout = 4.minutes
-  
+
   // This helps improve times on Native, more investigation is needed to understand why.
   override val maxParallelism = 1
 
