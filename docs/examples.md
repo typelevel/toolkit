@@ -214,17 +214,17 @@ object Passenger:
         val age = ageOpt.toRight[String]("N/A")
         Passenger(id, firstName, age, flightNumber, destination)
 
-    // Here we define a manual encoder for encoding Passenger classes to a CSV
-    given csvRowEncoder: CsvRowEncoder[Passenger, String] with
-      def apply(p: Passenger): CsvRow[String] =
-        CsvRow.fromNelHeaders(
-          NonEmptyList.of(
-            (p.firstName, "first_name"),
-            (p.age.toString(), "age"),
-            (p.flightNumber, "flight_number"),
-            (p.destination, "destination")
-          )
+  // Here we define a manual encoder for encoding Passenger classes to a CSV
+  given csvRowEncoder: CsvRowEncoder[Passenger, String] with
+    def apply(p: Passenger): CsvRow[String] =
+      CsvRow.fromNelHeaders(
+        NonEmptyList.of(
+          (p.firstName, "first_name"),
+          (p.age.toString(), "age"),
+          (p.flightNumber, "flight_number"),
+          (p.destination, "destination")
         )
+      )
 
 val input = Files[IO]
   .readAll(Path("./example.csv"), 1024, Flags.Read)
